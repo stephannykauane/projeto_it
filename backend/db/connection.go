@@ -1,19 +1,21 @@
 package db
-import (
-	"fmt"
-	"database/sql"
-)
 
+import (
+	"database/sql"
+	"fmt"
+
+	_ "github.com/lib/pq" 
+)
 
 const (
-	host = "localhost"
-	port = 5432
-	user = "calagem"
-	password = "12345"
-	dbname = "calagem"
+	host     = "localhost"
+	port     = 5432
+	user     = "calagem"
+	password = "admin"
+	dbname   = "calagem"
 )
 
-func connectdb() *sql.DB {
+func ConnectDB() *sql.DB {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 
@@ -22,8 +24,8 @@ func connectdb() *sql.DB {
 	}
 	return db
 }
-func database() {
 
+func Database() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	db, err := sql.Open("postgres", psqlInfo)
 
@@ -35,13 +37,7 @@ func database() {
 	if err != nil {
 		fmt.Println("Cannot ping the database")
 		panic(err)
-
 	}
 	db.Close()
-	fmt.Println("Successfully connected!")
-
+	fmt.Println("Successfully connected with database!")
 }
-
-
-
-

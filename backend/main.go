@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-
 	datab "github.com/stephannykauane/projeto_it/backend/db"
 )
 
@@ -12,7 +11,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-    datab.database()
+	datab.Database() 
 	http.HandleFunc("/", handler)
 	fmt.Println("Servidor Go iniciado em http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
