@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 )
-func calculator (jsonData []byte, metodoID int)(float64, error){
+
+func Calculando (jsonData []byte, MetodoID int)(float64, error){
 	var resultado float64
     var err error
 
-	switch metodoID {
+	switch MetodoID {
 	case 1: 
 	   var satbases SatBases
 	   err = json.Unmarshal(jsonData, &satbases)

@@ -8,9 +8,10 @@ import (
     "crypto/subtle"
     "time"
     "github.com/golang-jwt/jwt/v4"
-    
-
-
+	"github.com/stephannykauane/projeto_it/backend/calculator"
+	"fmt"
+	"io"
+ 
 )
 
 func GetLogin(w http.ResponseWriter, r *http.Request) {
@@ -111,55 +112,83 @@ func PostSignUp(w http.ResponseWriter, r *http.Request) {
     w.Write([]byte(`{"message": "Usuário cadastrado com sucesso!"}`))
 }
 
-func PostAnalise(w http.ResponseWriter, r *http.Request) {
-	SetHeaders(w)
 
-	if r.Method == http.MethodOptions {
-		w.WriteHeader(http.StatusOK)
+func CriarAnalise(w http.ResponseWriter, r *http.Request) {
+	var analiseRequest AnaliseRequest
+	var metodo Metodo
+
+	jsonData, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("erro ao ler o corpo da requisição: %v", err), http.StatusBadRequest)
 		return
 	}
 
-	if r.Method != http.MethodPost {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write([]byte(`{"error": "Method not allowed"}`))
+
+	err = json.Unmarshal(jsonData, &analiseRequest)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("erro ao decodificar JSON: %v", err), http.StatusBadRequest)
 		return
 	}
 
-	var analise calculator.Analise
-	if err := json.NewDecoder(r.Body).Decode(&analise); err != nil {
-		http.Error(w, "Erro ao decodificar JSON: "+err.Error(), http.StatusBadRequest)
-		return
-	}
 
 	db := datab.ConnectDB()
 	defer db.Close()
 
-	query := `
-		INSERT INTO analise (metodo_id, calcio, magnesio, potassio, ctc, sat_d, argila, aluminio, prnt)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-		RETURNING id
-	`
-	var insertedID int
-	err := db.QueryRow(query, analise.MetodoID, analise.Calcio, analise.Magnesio, analise.Potassio,
-		analise.Ctc, analise.SatD, analise.Argila, analise.Aluminio, analise.Prnt).Scan(&insertedID)
+	var usuarioExists bool
+
+	queryUsuario := `SELECT EXISTS (SELECT 1 FROM "Usuario" WHERE "id" = $1)`
+
+	err = db.QueryRow(queryUsuario, analiseRequest.UsuarioID).Scan(&usuarioExists)
+	
 	if err != nil {
-		http.Error(w, "Erro ao inserir análise: "+err.Error(), http.StatusInternalServerError)
+        http.Error(w, fmt.Sprintf("Erro ao verificar usuário no banco: %v", err), http.StatusInternalServerError)
+        return
+    }
+
+    if !usuarioExists {
+        http.Error(w, "Usuário não encontrado", http.StatusBadRequest)
+        return
+    }
+    fmt.Println("ID do usuário recebido:", analiseRequest.UsuarioID)
+
+	query := `INSERT INTO "Analise" ("id_usuario", "potassio", "magnesio", "aluminio", "calcio", "sat_desejada", "prnt", "ctc", "argila") 
+	          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING "id"`
+
+	var analiseID int
+	err = db.QueryRow(query, analiseRequest.UsuarioID, analiseRequest.Potassio, analiseRequest.Magnesio, analiseRequest.Aluminio, analiseRequest.Calcio, analiseRequest.SatD, analiseRequest.Prnt, analiseRequest.Ctc, analiseRequest.Argila).Scan(&analiseID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("erro ao inserir análise: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-	resultado, err := calculator.CalcularComDados(analise)
+	err = json.Unmarshal(jsonData, &metodo)
+    if err != nil {
+	http.Error(w, fmt.Sprintf("erro ao decodificar JSON para Metodo: %v", err), http.StatusBadRequest)
+	
+	return
+    }
+    
+	resultado, err := calculator.Calculando(jsonData, metodo.MetodoID)
 	if err != nil {
-		http.Error(w, "Erro ao realizar cálculo: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, fmt.Sprintf("erro ao calcular: %v", err), http.StatusInternalServerError)
+		return
+	}
+    
+	fmt.Println("ID metodo recebido:", metodo.MetodoID)
+	calculoQuery := `INSERT INTO "Calculo" ("id_analise", "resultado", "data_calculo", "id_metodo") 
+	                 VALUES ($1, $2, current_date, $3)`
+	_, err = db.Exec(calculoQuery, analiseID, resultado, metodo.MetodoID)
+	fmt.Println("ID metodo recebido:", metodo.MetodoID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("erro ao inserir cálculo: %v", err), http.StatusInternalServerError)
 		return
 	}
 
-
-	response := map[string]interface{}{
-		"analise_id": insertedID,
-		"resultado":  resultado,
-	}
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(response)
+	
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message": "Análise e cálculo realizados com sucesso",
+		"resultado": resultado,
+	})
 }
-
-

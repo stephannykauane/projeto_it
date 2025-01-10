@@ -23,8 +23,20 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-type metodoID struct {
-	MetodoID int `json: "metodo_id"`
 
+
+type AnaliseRequest struct {
+    UsuarioID   int     `json:"id_usuario"`
+	Potassio    float64 `json:"potassio"`
+	Magnesio    float64 `json:"magnesio"`
+	Aluminio    float64 `json:"aluminio"`
+	Calcio      float64 `json:"calcio"`
+    Argila      float64 `json:"argila"`
+	SatD        float64 `json:"sat_desejada"`
+	Prnt        int     `json:"prnt"`
+	Ctc         float64 `json:"ctc"`
 }
 
+type Metodo struct {
+	MetodoID int  `json:"id_metodo"`
+}
