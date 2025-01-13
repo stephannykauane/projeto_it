@@ -1,22 +1,25 @@
-package api
+package handles
 
 import (
 	"encoding/json"
 	"net/http"
 	_ "github.com/lib/pq"
 	datab "github.com/stephannykauane/projeto_it/backend/db"
-    "crypto/subtle"
-    "time"
     "github.com/golang-jwt/jwt/v4"
 	"github.com/stephannykauane/projeto_it/backend/calculator"
+	"github.com/stephannykauane/projeto_it/backend/headers"
+	"github.com/stephannykauane/projeto_it/backend/types"
 	"fmt"
 	"io"
+    "crypto/subtle"
+    "time"
+	
+
  
 )
 
 func GetLogin(w http.ResponseWriter, r *http.Request) {
-	SetHeaders(w)
-
+    SetHeaders(w)
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)
 		return
@@ -44,7 +47,7 @@ func GetLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if subtle.ConstantTimeCompare([]byte(storedHash), []byte(hash(user.Senha))) != 1 {
+	if subtle.ConstantTimeCompare([]byte(storedHash), []byte(Hash(user.Senha))) != 1 {
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 		return
 	}
@@ -98,7 +101,7 @@ func PostSignUp(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    hashed := hash(user.Senha)
+    hashed := Hash(user.Senha)
     db := datab.ConnectDB()
     defer db.Close()
 

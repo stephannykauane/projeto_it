@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 )
 
-func hash (senha string) string{
+func Hash (senha string) string{
 	h := sha256.New()
 	h.Write([]byte(senha))
 

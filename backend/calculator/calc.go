@@ -28,7 +28,7 @@ func (a SatBases) calculo() float64 {
 func (b Aluminio) calculo() float64 {
 	var NC float64
 
-	if b.Ctc > 4.0 || b.Argila > 15 || (b.Calcio+b.Magnesio) < 2.0 {
+	if b.Ctc > 4.0 && b.Argila > 15 && (b.Calcio+b.Magnesio) < 2.0 {
 
 		NC = ((2 * b.Aluminio) + 2 - (b.Calcio + b.Magnesio)) * float64(b.Prnt)
 		fmt.Println("esse foi utilizado!")
@@ -49,10 +49,10 @@ func (b Aluminio) calculo() float64 {
 	return NC
 }
 
-type calculavel interface {
+type Calculavel interface {
 	calculo() float64
 }
 
-func gerarCalculo(c calculavel) float64 {
+func GerarCalculo(c Calculavel) float64 {
 	return c.calculo()
 }
