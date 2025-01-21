@@ -3,14 +3,22 @@ package calculator
 import (
 	"encoding/json"
 	"fmt"
-	"backend/types"
 	"github.com/stephannykauane/projeto_it/backend/types"
 )
 
+func Calcular(i interface{}) {
+	switch v := i.(type) {
+	case types.SatBases:
+		calculoSatBases(v)
+    case types.Aluminio:
+		calculoAluminio(v)
+	default:
+		fmt.Println("Tipo invalido")
+	}
+}
 
-func (a SatBases) calculo() float64 {
+func calculoSatBases(a types.SatBases) float64 {
 
-	
 	s := a.Calcio + a.Magnesio + a.Potassio
 	v1 := (s / a.Ctc) * 100
 
@@ -19,19 +27,18 @@ func (a SatBases) calculo() float64 {
 	fmt.Println("valor saturação desejada: ", a.SatD)
 
 	NC := ((a.Ctc * (a.SatD - v1)) / 10) * float64(a.Prnt)
-    fmt.Println("valor ctc: ", a.Ctc)
+	fmt.Println("valor ctc: ", a.Ctc)
 	fmt.Println("valor Magnesio: ", a.Magnesio)
 	fmt.Println("valor calcio: ", a.Calcio)
 	fmt.Println("valor Potassio: ", a.Potassio)
 	fmt.Println("valor prnt: ", a.Prnt)
 
-
-
 	return NC
 
 }
 
-func (b Aluminio) calculo() float64 {
+
+func calculoAluminio(b types.Aluminio) float64 {
 	var NC float64
 
 	if b.Ctc > 4.0 && b.Argila > 15 && (b.Calcio+b.Magnesio) < 2.0 {
@@ -55,49 +62,40 @@ func (b Aluminio) calculo() float64 {
 	return NC
 }
 
-type Calculavel interface {
-	calculo() float64
-}
 
-func GerarCalculo(c Calculavel) float64 {
-	return c.calculo()
-}
 
-func Calculando (jsonData []byte, MetodoID int)(float64, error){
+func Calculando(jsonData []byte, MetodoID int) (float64, error) {
 	var resultado float64
-    var err error
+	var err error
 
 	switch MetodoID {
-	case 1: 
-	   var satbases SatBases
-	   err = json.Unmarshal(jsonData, &satbases)
+	case 1:
+		var satbases types.SatBases
+		err = json.Unmarshal(jsonData, &satbases)
 
-	   if err != nil {
-		
-		return 0,fmt.Errorf("erro ao decodificar JSON para SatBases: %v", err)		
-	   }
+		if err != nil {
 
-	   resultado = GerarCalculo(satbases) 
-	
-	case 2: 
-	   var aluminio Aluminio
-	   err = json.Unmarshal(jsonData, &aluminio)
+			return 0, fmt.Errorf("erro ao decodificar JSON para SatBases: %v", err)
+		}
 
-	   if err != nil{
-		
-		return 0, fmt.Errorf("erro ao decodificar JSON para Aluminio: %v", err)
-	   }
+		resultado = calculoSatBases(satbases)
 
-	   resultado = GerarCalculo(aluminio)
-	
+	case 2:
+		var aluminio types.Aluminio
+		err = json.Unmarshal(jsonData, &aluminio)
+
+		if err != nil {
+
+			return 0, fmt.Errorf("erro ao decodificar JSON para Aluminio: %v", err)
+		}
+
+		resultado = calculoAluminio(aluminio)
+
 	default:
-	   
-	   return 0,fmt.Errorf("metodoID desconhecido") 
+
+		return 0, fmt.Errorf("metodoID desconhecido")
 	}
 
 	return resultado, nil
-
-
-
 
 }

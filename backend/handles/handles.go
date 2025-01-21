@@ -13,13 +13,21 @@ import (
 	"io"
     "crypto/subtle"
     "time"
+	"encoding/hex"
+	"crypto/sha256"
 	
 
  
 )
+func Hash (senha string) string{
+	h := sha256.New()
+	h.Write([]byte(senha))
+
+	return hex.EncodeToString(h.Sum(nil))
+}
 
 func GetLogin(w http.ResponseWriter, r *http.Request) {
-    SetHeaders(w)
+    headers.SetHeaders(w)
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)
 		return
@@ -30,7 +38,7 @@ func GetLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user Usuario
+	var user types.Usuario
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil || user.Email == "" || user.Senha == "" {
 		http.Error(w, "Invalid input", http.StatusBadRequest)
@@ -53,12 +61,13 @@ func GetLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	expirationTime := time.Now().Add(15 * time.Minute)
-	claims := &Claims{
+	claims := &types.Claims{
 		Email: user.Email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
 	}
+    var jwtKey = []byte("801a28164703e91603002e1a64bd675f6788dc1adef7ce1ae407fa155a52ccd09ca3eb969398378b6cb04a7f2ae756fdbf24b0b340e548439ff0eba371430532") 
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(jwtKey)
@@ -82,7 +91,7 @@ func GetLogin(w http.ResponseWriter, r *http.Request) {
 
 
 func PostSignUp(w http.ResponseWriter, r *http.Request) {
-    SetHeaders(w)
+    headers.SetHeaders(w)
 
     if r.Method == http.MethodOptions {
         w.WriteHeader(http.StatusOK)
@@ -95,7 +104,7 @@ func PostSignUp(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    var user Usuario
+    var user types.Usuario
     if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
         http.Error(w, "Erro ao decodificar JSON: "+err.Error(), http.StatusBadRequest)
         return
@@ -117,8 +126,8 @@ func PostSignUp(w http.ResponseWriter, r *http.Request) {
 
 
 func CriarAnalise(w http.ResponseWriter, r *http.Request) {
-	var analiseRequest AnaliseRequest
-	var metodo Metodo
+	var analiseRequest types.AnaliseRequest
+	var metodo types.Metodo
 
 	jsonData, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -177,7 +186,6 @@ func CriarAnalise(w http.ResponseWriter, r *http.Request) {
 		return
 	}
     
-	fmt.Println("ID metodo recebido:", metodo.MetodoID)
 	calculoQuery := `INSERT INTO "Calculo" ("id_analise", "resultado", "data_calculo", "id_metodo") 
 	                 VALUES ($1, $2, current_date, $3)`
 	_, err = db.Exec(calculoQuery, analiseID, resultado, metodo.MetodoID)

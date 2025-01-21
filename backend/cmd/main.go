@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	datab "github.com/stephannykauane/projeto_it/backend/db"
-	api "github.com/stephannykauane/projeto_it/backend/api"
+	routes "github.com/stephannykauane/projeto_it/backend/routes"
 	
 )
 
@@ -13,7 +13,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-    api.Routes()
+    routes.Routes()
 	datab.Database() 
 	http.HandleFunc("/", handler)
 	fmt.Println("Servidor Go iniciado em http://localhost:8080")

@@ -22,9 +22,6 @@ type SatBases struct {
 	Ctc      float64 `json:"ctc"`
 }
 
-type Analise struct {
-	MetodoID int     `json:"id_metodo"`
-}
 
 type Usuario struct {
 	Email string `json:"email"`
@@ -37,13 +34,11 @@ type Request struct {
 	Senha string `json:"senha"`
 }
 
-var jwtKey = []byte("801a28164703e91603002e1a64bd675f6788dc1adef7ce1ae407fa155a52ccd09ca3eb969398378b6cb04a7f2ae756fdbf24b0b340e548439ff0eba371430532")
 
 type Claims struct {
 	Email string `json:"email"`
 	jwt.RegisteredClaims
 }
-
 
 
 type AnaliseRequest struct {
@@ -61,3 +56,5 @@ type AnaliseRequest struct {
 type Metodo struct {
 	MetodoID int  `json:"id_metodo"`
 }
+
+
