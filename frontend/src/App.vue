@@ -1,26 +1,46 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <RouterView/>
 </template>
 
-<script>
-import HelloWorld from './components/HelloWorld.vue'
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Signika+Negative:wght@300..700&display=swap');
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body {  
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  justify-content: center; 
+  background: linear-gradient(to bottom, #384031, #93A87E);
+  font-family: 'Signika Negative', sans-serif;
+}
+
+div#app {
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+}
+
+@media screen and (max-width: 767px) {
+  body {
+    padding: 0 2px;
   }
 }
-</script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>

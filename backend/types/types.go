@@ -2,6 +2,7 @@ package types
 
 import (
 	"github.com/golang-jwt/jwt/v4"
+	"time"
 )
 
 type Aluminio struct {
@@ -55,6 +56,19 @@ type AnaliseRequest struct {
 
 type Metodo struct {
 	MetodoID int  `json:"id_metodo"`
+}
+
+type CalculoDetalhes struct {
+	Resultado    float64   `json:"resultado"`
+	DataCalculo  time.Time `json:"data_calculo"`
+	MetodoID     int       `json:"id_metodo"`
+	Potassio     float64   `json:"potassio"`
+	Magnesio     float64   `json:"magnesio"`
+	Calcio       float64   `json:"calcio"`
+	SatDesejada  float64   `json:"sat_desejada"`
+	Prnt         float64   `json:"prnt"`
+	Ctc          float64   `json:"ctc"`
+	Argila       float64   `json:"argila"`
 }
 
 

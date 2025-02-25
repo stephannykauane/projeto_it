@@ -13,6 +13,7 @@ const (
 	user     = "calagem"
 	password = "admin"
 	dbname   = "calagem"
+	jwtKey   = "secretkey"
 )
 
 func ConnectDB() *sql.DB {
