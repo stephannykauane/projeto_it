@@ -4,14 +4,13 @@
         <HeaderTextAtom text="Caliming"></HeaderTextAtom>
     </div>    
     <div class="button-caliming">
-       <HomeButtonAtom customClass="button-caliming" text="Entrar"></HomeButtonAtom>  
+       <ButtonHomeAtom customClass="button-caliming" text="Entrar"></ButtonHomeAtom>  
     </div>
-        
   </div>
 </template>
 
 <script setup lang="ts">
-import HomeButtonAtom from '../atoms/HomeButtonAtom.vue';
+import ButtonHomeAtom from '../atoms/ButtonHomeAtom.vue';
 import HeaderTextAtom from '../atoms/HeaderTextAtom.vue';
 </script>
 

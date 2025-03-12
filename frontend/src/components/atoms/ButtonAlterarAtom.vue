@@ -34,15 +34,24 @@ export default {
     border: 2px solid transparent;
     cursor: pointer;
     width: 100%;
-    padding: 0.7em;
+    padding: 0.4em 2.5em;
     border-radius: 10em;
     transition: .3s;
 }
 
 .profile-alterar:hover{
     transition: .3s;
-    background-color: #70885a9d;
+    background-color: #414e34d7;
 }
+
+
+@media screen and (max-width: 769px) {
+    .profile-alterar{
+        font-size: 0.8em;
+    }
+    
+}
+
 
 </style>
 

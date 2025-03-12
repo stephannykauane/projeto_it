@@ -2,6 +2,7 @@
 import ButtonGreenAtom from '../atoms/ButtonGreenAtom.vue';
 import ButtonSairAtom from '../atoms/ButtonSairAtom.vue';
 import HeaderTextAtom from '../atoms/HeaderTextAtom.vue';
+import SeparatorAtom from '../atoms/SeparatorAtom.vue';
 
 </script>
 
@@ -14,22 +15,60 @@ import HeaderTextAtom from '../atoms/HeaderTextAtom.vue';
             <div class="button-Sair">
               <ButtonSairAtom text="Sair"/> 
             </div>       
-        </div>
+        </div>   
     </div>
+    <div class="container-separator">
+            <SeparatorAtom/>
+        </div>
   </template>
 
 <style scoped>
-.button-sair{
-    color: beige;
+
+
+.header-molecule {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 1rem;
+    margin: 0 10em;
+    box-sizing: border-box;
+    transition: 0.5s;
 }
 
-.header-molecule{
-    padding: 1em 20em;
-}
-.container-header-molecule{
+
+.container-header-molecule {
     background-color: #93A87E;
-    width: 100vw;;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
 }
 
 
+@media screen and (max-width: 1200px) {
+  .header-molecule {
+    margin-top: 0.5rem;
+    padding: 0;
+    gap: 5em;
+  }
+}
+
+@media screen and (max-width: 769px) {
+  .header-molecule {
+    margin-top: 0.5rem;
+    padding: 0;
+    gap: 10em;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .header-molecule {
+    margin-top: 0.5rem;
+    padding: 0;
+    gap: 2em;
+  }
+}
 </style>
+
+

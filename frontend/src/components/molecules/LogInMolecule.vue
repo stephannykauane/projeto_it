@@ -33,7 +33,7 @@ import TextAtom from '../atoms/TextAtom.vue';
 </div>
 </template>
 
-<style>
+<style scoped>
 
 hr{
     animation: hr 2s ease-out forwards;
@@ -99,6 +99,7 @@ hr{
 .bemvindo-text{
     color: #CAFE9D;
     margin-top: 20px;
+        
 }
 
 .inputs-login div{

@@ -12,7 +12,7 @@
 }
 
 html, body {
-  width: 100vw;
+  min-width: 100vw;
   min-height: 100vh;
   overflow-x: hidden;
 }
@@ -20,8 +20,7 @@ html, body {
 body {  
   display: flex;
   flex-direction: column; 
-  align-items: center;
-  justify-content: center; 
+  justify-content: center;
   background: linear-gradient(to bottom, #384031, #93A87E);
   font-family: 'Signika Negative', sans-serif;
 }
@@ -30,16 +29,20 @@ div#app {
   width: 100%;
   min-height: 100%;
   display: flex;
-  flex-direction: column; 
-  align-items: center;
+  flex-direction: column;
+ 
   justify-content: center;
   flex-grow: 1;
+ 
 }
 
 @media screen and (max-width: 767px) {
   body {
     padding: 0 2px;
   }
+
+
+
 }
 
 

@@ -20,7 +20,7 @@ import SignUpMolecule from '../molecules/SignUpMolecule.vue';
     display: flex;
     width: 100%;
     justify-content: center;
-    padding: 2.3em 20em;
+    padding: 0 20em;
     
   
 }
@@ -30,7 +30,7 @@ import SignUpMolecule from '../molecules/SignUpMolecule.vue';
     width: 100%;
     justify-content: center;
     background-color: rgba(147, 168, 126, 0.6);
-    padding: 8.62em 3em;
+    padding: 8em 3em;
     border-radius: 0.5em ;
     box-shadow: 0.5px 5px 30px rgb(0, 0, 0, 0.25);;
 }

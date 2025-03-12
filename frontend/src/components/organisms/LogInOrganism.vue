@@ -21,7 +21,7 @@ import LogInMolecule from '../molecules/LogInMolecule.vue';
     width: 100%;
     height: auto;
     justify-content: center; 
-    padding: 2.3em 20em;
+    padding: 0 20em;
 }
 
 .login-form{
@@ -29,7 +29,7 @@ import LogInMolecule from '../molecules/LogInMolecule.vue';
     width: 100%;
     justify-content: center;
     background-color: rgba(147, 168, 126, 0.6);
-    padding: 12.25em 2.7em;
+    padding: 12em 2.7em;
     border-radius: 0.5em ;
     box-shadow: 0.5px 5px 30px rgb(0, 0, 0, 0.25);;
 }

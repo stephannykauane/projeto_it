@@ -49,6 +49,30 @@
     background-color: #c02e2e;
 }
 
+.button-sair {
+    animation: sair 1.5s ease-in-out;
+}
+
+@keyframes sair {
+    from {
+        opacity: 0;
+        transform: translateX(10px); 
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media screen and (max-width: 1025px) {
+    .sair-button {
+        font-size: 0.7em;
+        padding: 0.5em 1em;
+        margin: 5px;
+    }
+    
+}
+
 
 </style>
     

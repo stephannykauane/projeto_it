@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import TextAtom from '../atoms/TextAtom.vue';
 import ImgHomeAtom from '../atoms/ImgHomeAtom.vue';
-import HomeButtonAtom from '../atoms/HomeButtonAtom.vue';
+import ButtonHomeAtom from '../atoms/ButtonHomeAtom.vue';
 
 </script>
 
@@ -21,7 +21,7 @@ import HomeButtonAtom from '../atoms/HomeButtonAtom.vue';
             <TextAtom text="Caliming é uma plataforma desenvolvida para facilitar a rotina do agronegócio no cálculo de calagem"></TextAtom>
          </div>
          <div class="botao-comecar">
-            <HomeButtonAtom text="Começar"></HomeButtonAtom>
+            <ButtonHomeAtom text="Começar"/>
          </div>
       </div> 
    </div>
