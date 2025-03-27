@@ -34,7 +34,9 @@ func CalculoSatBases(a types.SatBases) (float64, float64) {
 	fmt.Println("valor saturação desejada: ", a.SatD)
 
 	NC := ((a.Ctc * (a.SatD - SatAtual)) / 10) * float64(a.Prnt)
+
 	Result := math.Round(NC)
+	
 	fmt.Println("valor ctc: ", a.Ctc)
 	fmt.Println("valor Magnesio: ", a.Magnesio)
 	fmt.Println("valor calcio: ", a.Calcio)

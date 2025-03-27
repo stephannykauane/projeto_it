@@ -31,10 +31,14 @@ import TextAtom from '../atoms/TextAtom.vue';
     </div>  
     <div class="possui-conta-text">
      <TextAtom text="Já possui conta?"></TextAtom>
-     <TextAtom class="entrar" text="Entrar."/>
+     <router-link to="login">
+        <TextAtom class="entrar" text="Entrar."/>
+     </router-link>
     </div>      
     <div class="prosseguir">
-        <TextAtom text="Prosseguir sem conta ➜"></TextAtom>
+        <router-link to="/calculator">
+            <TextAtom text="Prosseguir sem conta ➜"></TextAtom>
+        </router-link>
     </div>
 </div>
 </template>

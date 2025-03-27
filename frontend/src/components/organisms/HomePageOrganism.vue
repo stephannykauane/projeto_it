@@ -22,7 +22,7 @@ import RightHomeMolecule from '../molecules/RightHomeMolecule.vue';
 </template>
 
 
-<style>
+<style scoped>
 
 .organism-homepage{
   display: flex;

@@ -19,9 +19,9 @@ defineProps({
 .text-input{
   width: 100%;
   margin: 0.5em 0.2em;
-  padding: 1em 2em;
-  font-family:'Konkhmer Sleokchher' ;
-  font-size: 0.9em;
+  padding: 0.6em 2em;
+  font-family:'Konkhmer Sleokchher';
+  font-size: 1.1em;
   color: aliceblue;
   box-sizing: border-box;
   cursor: pointer;

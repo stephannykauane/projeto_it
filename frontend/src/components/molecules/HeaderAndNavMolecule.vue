@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
-import AltProfileMolecule from '../molecules/AltProfileMolecule.vue';
 import HeaderPrincipalMolecule from '../molecules/HeaderPrincipalMolecule.vue';
 import NavMenuMolecule from '../molecules/NavMenuMolecule.vue';
-import HeaderAndNavMolecule from '../molecules/HeaderAndNavMolecule.vue';
+
 
 onMounted(() => {
   const appDiv = document.getElementById('app');
@@ -31,38 +30,25 @@ onUnmounted(() => {
 
 
 <template>
-    <div class="container-profile-organism">
-      <div class="header-principal-organism">
-        <HeaderAndNavMolecule/>
-      </div>     
-      <div class="alt">
-        <AltProfileMolecule/>
-      </div>
+    <div class="container-header-and-nav">
+        <div class="header">
+            <HeaderPrincipalMolecule/>
+        </div>
+        <div class="nav">
+            <NavMenuMolecule/>
+        </div>
     </div>
 </template>
 
-<style scoped>
 
-.header-principal-organism {
-    display: flex;
+<style>
+
+.nav {
     width: 100%;
-    flex-direction: column;
-
+    padding: 4vw 13vw;
+    transition: 0.5em;
+    margin-top: 2em;
 }
-
-.container-profile-organism {
-    width: 100%;
-}
-
-.alt {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding:0 23vw;
-  width: 100%;
-  transition: 0.5s;
-}
-
 
 @media screen and (max-width: 1500px){
     .nav{
@@ -76,7 +62,5 @@ onUnmounted(() => {
       padding: 0 2vw;
     }
 }
-
-
 
 </style>

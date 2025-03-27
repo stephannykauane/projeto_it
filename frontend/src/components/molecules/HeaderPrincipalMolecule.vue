@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import ButtonGreenAtom from '../atoms/ButtonGreenAtom.vue';
+
 import ButtonSairAtom from '../atoms/ButtonSairAtom.vue';
 import HeaderTextAtom from '../atoms/HeaderTextAtom.vue';
 import SeparatorAtom from '../atoms/SeparatorAtom.vue';
+
 
 </script>
 
@@ -18,8 +19,8 @@ import SeparatorAtom from '../atoms/SeparatorAtom.vue';
         </div>   
     </div>
     <div class="container-separator">
-            <SeparatorAtom/>
-        </div>
+        <SeparatorAtom/>
+    </div>
   </template>
 
 <style scoped>
@@ -30,7 +31,7 @@ import SeparatorAtom from '../atoms/SeparatorAtom.vue';
     align-items: center;
     width: 100%;
     padding: 1rem;
-    margin: 0 10em;
+    margin: 0 14.2em;
     box-sizing: border-box;
     transition: 0.5s;
 }

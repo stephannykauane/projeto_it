@@ -30,7 +30,6 @@ div#app {
   min-height: 100%;
   display: flex;
   flex-direction: column;
- 
   justify-content: center;
   flex-grow: 1;
  

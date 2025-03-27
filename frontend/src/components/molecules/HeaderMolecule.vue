@@ -4,7 +4,10 @@
         <HeaderTextAtom text="Caliming"></HeaderTextAtom>
     </div>    
     <div class="button-caliming">
-       <ButtonHomeAtom customClass="button-caliming" text="Entrar"></ButtonHomeAtom>  
+      <router-link to="login">
+        <ButtonHomeAtom customClass="button-caliming" text="Entrar"></ButtonHomeAtom>
+      </router-link>
+  
     </div>
   </div>
 </template>

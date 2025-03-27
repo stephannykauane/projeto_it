@@ -28,7 +28,10 @@ import TextAtom from '../atoms/TextAtom.vue';
     </div>  
     <div class="conta-text">
      <TextAtom text="Não possui conta?"></TextAtom>
-     <TextAtom class="cadastrar" text="Cadastrar."/>
+     <router-link to="signup">
+       <TextAtom class="cadastrar" text="Cadastrar."/>
+     </router-link>
+     
     </div>      
 </div>
 </template>

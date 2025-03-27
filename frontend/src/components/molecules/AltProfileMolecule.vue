@@ -153,7 +153,9 @@ const alternarEdicaoSenha = () => { editandoSenha.value = !editandoSenha.value; 
   display: flex;
   justify-content: center;
   align-items: center;
+  align-self: center;
   padding-top: 3em;
+  max-width: 500px;
 }
 
 @media screen and (max-width: 769px) {
