@@ -1,6 +1,6 @@
 <template>
     <div class="text-box">
-        <p>{{ text }}</p>
+        <h3>{{ text }}</h3>
 
     </div>
 </template>
@@ -28,7 +28,7 @@ defineProps ({
    transition: .3s;
 }
 
-p {
+h3 {
     text-align: center;
     align-self: center;
     font-family:'Konkhmer Sleokchher';
@@ -44,7 +44,7 @@ p {
         border-radius: 0.8em;
     }
 
-    p {
+    h3 {
         font-size: 1em;
     }
 }

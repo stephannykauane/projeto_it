@@ -7,8 +7,8 @@
       <div class="calculator">
         <div class="button-method">
           <AccordionAtom :title="methodTitle">
-              <p @click="changeMethod('saturacao')">SATURAÇÃO POR BASES</p>
-              <p @click="changeMethod('aluminio')">ALUMÍNIO TROCÁVEL</p>
+              <h3 @click="changeMethod('saturacao')">SATURAÇÃO POR BASES</h3>
+              <h3 @click="changeMethod('aluminio')">ALUMÍNIO TROCÁVEL</h3>
           </AccordionAtom>
         </div>
   
@@ -39,7 +39,7 @@
   };
   </script>
   
-  <style>
+  <style scoped>
   .container-calculator-organism {
     display: flex;
     justify-content: center;
@@ -65,15 +65,17 @@
   transition: .3s;
 }
 
-.button-method p {
+.button-method h3 {
     color: #ffffff;
     cursor: pointer;
+    font-size: 1em;
     padding: 0.5em;
 }
 
-p:hover{
-    background-color: #b6d49a7c;
 
+
+h3:hover{
+    background-color: #b6d49a7c;
 }
   
 

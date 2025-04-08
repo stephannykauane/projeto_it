@@ -1,11 +1,11 @@
 <template>
    <div class="container-img">
-      <img src="/home/stephanny/projeto_it/frontend/src/assets/maos.jpg">
+      <img class="img-home" src="../../../src/assets/maos.jpg">
    </div>
 </template>
 
 <style>
-    img {
+    .img-home {
       width: 50%;
       height: auto; 
       image-rendering: crisp-edges;
