@@ -91,9 +91,10 @@ export default {
 
 .filter-molecule{
     font-family: 'Konkhmer Sleokchher';
-    width: 100%;
+    width: 78%;
     display: flex;
-    justify-content: space-evenly;
+    margin-left: 12.3em;
+    justify-content: space-between;
     flex-direction: row;
     position: absolute;
     top: 0;
@@ -109,7 +110,9 @@ export default {
 
 
 .mes-filter:hover, .dia-filter:hover, .ano-filter:hover, .method-filter:hover{
-  background-color: #75866483;
+    background-color: #75866483;
+    border: 0.1px solid transparent;
+
 }
 
 ::v-deep(.accordion-content){

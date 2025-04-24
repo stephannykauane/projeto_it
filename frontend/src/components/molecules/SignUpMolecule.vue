@@ -1,7 +1,39 @@
-<script setup lang="ts">
+<script setup>
 import ButtonGreenAtom from '../atoms/ButtonGreenAtom.vue';
 import InputAtom from '../atoms/InputAtom.vue';
 import TextAtom from '../atoms/TextAtom.vue';
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import calimingAPI from '/home/stephanny/projeto_it/frontend/src/services/CalimingAPIClient.js'
+
+const email = ref('')
+const senha = ref ('')
+const confirmarSenha = ref ('')
+const nome = ref('')
+const erro = ref('')
+const router = useRouter()  
+
+
+const handleCadastro = async () => {
+    if (senha.value !== confirmarSenha.value) {
+        erro.value = "As senhas não coincidem."
+        return 
+    }
+
+    try {
+        await calimingAPI.signUp({
+            email: email.value,
+            senha: senha.value,
+            nome: nome.value
+        })
+        router.push('/calculator')
+    } catch (err) {
+        erro.value = err.message
+    }
+}
+
+
+
 
 </script>
 
@@ -16,18 +48,22 @@ import TextAtom from '../atoms/TextAtom.vue';
     </div>  
     <div class="inputs-login">
         <div>
-           <InputAtom class="nome" placeholder="Nome"/> 
+           <InputAtom class="nome" placeholder="Nome" v-model="nome"/> 
         </div>
         <div>
-            <InputAtom class="email" placeholder="Email"/>
+            <InputAtom class="email" placeholder="Email" v-model="email"/>
         </div>
         <div>
-            <InputAtom class="senha" placeholder="Senha"/>
+            <InputAtom class="senha" placeholder="Senha" type="password" v-model="senha"/>
         </div>
-        
+        <div>
+            <InputAtom class="confirmar-senha" v-model="confirmarSenha" type="password" placeholder="Confirmar Senha" />
+        </div>
+   
     </div>  
+    <div v-if="erro" class="erro-msg"> {{  erro }}</div>
     <div class="button-cadastrar">
-        <ButtonGreenAtom text="Cadastrar"/>
+        <ButtonGreenAtom text="Cadastrar" @click="handleCadastro"/>
     </div>  
     <div class="possui-conta-text">
      <TextAtom text="Já possui conta?"></TextAtom>

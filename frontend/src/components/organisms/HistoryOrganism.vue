@@ -3,6 +3,8 @@
 import FilterMolecule from '../molecules/FilterMolecule.vue';
 import HeaderAndNavMolecule from '../molecules/HeaderAndNavMolecule.vue';
 import ButtonAlterarAtom from '../atoms/ButtonAlterarAtom.vue';
+import CheckBoxAtom from '../atoms/CheckBoxAtom.vue';
+import CheckBoxMolecule from '../molecules/CheckBoxMolecule.vue';
 
 </script>
 
@@ -37,6 +39,9 @@ import ButtonAlterarAtom from '../atoms/ButtonAlterarAtom.vue';
     <div class="button-select">
        <ButtonAlterarAtom class="select" text="Selecionar todos"/>
     </div>
+    <div class="checkbox-size">
+        <CheckBoxMolecule/>
+    </div>
  </div>   
 </template>
 
@@ -55,6 +60,10 @@ import ButtonAlterarAtom from '../atoms/ButtonAlterarAtom.vue';
     font-family:'Konkhmer Sleokchher';
 }
 
+.checkbox-size {
+    display: flex;
+    justify-content: center;
+}
 .history-text h1{
     font-size: 1.8em;
 
@@ -122,6 +131,7 @@ import ButtonAlterarAtom from '../atoms/ButtonAlterarAtom.vue';
 .select{
     width: 23.4%;
     margin-top: 3em;
+    margin-left: -0.5em;
 }
 
 ::v-deep(.profile-alterar){

@@ -26,6 +26,7 @@ export default {
   justify-content: center;  
   background: transparent;
   outline: none;
+  align-items: center;
   cursor: pointer;
   box-sizing: border-box;
   padding: 0.2em 2.5em;
@@ -41,6 +42,7 @@ export default {
   color: white;
   border: 2px solid #ffffffc7;
   border-radius: 50px;
+  text-align: center;
   transition: box-shadow 200ms ease-in-out, border-color 200ms;
 }
 

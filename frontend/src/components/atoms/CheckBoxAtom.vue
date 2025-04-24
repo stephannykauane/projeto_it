@@ -7,10 +7,13 @@
      />
      <span class="custom-checkbox"></span>
      <span class="label-text"><slot /></span>
+     <ButtonExportarAtom class="button-exportar" text="Exportar para Excel"></ButtonExportarAtom>
    </label>
  </template>
  
  <script setup>
+import ButtonExportarAtom from './ButtonExportarAtom.vue';
+
  defineProps({
    modelValue: {
      type: Boolean,
@@ -30,12 +33,13 @@
    border-radius: 1em;
    text-align: start;
    cursor: pointer;
+   margin: 1em 0 1em 0;
  }
  
  .checkbox-atom input {
    display: none;
  }
- 
+
 
  .custom-checkbox {
    width: 1.2em;
@@ -46,7 +50,8 @@
    position: relative;
    margin-right: 1em;
  }
- 
+
+
 
  .checkbox-atom input:checked + .custom-checkbox::after {
    content: '';

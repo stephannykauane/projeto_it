@@ -90,8 +90,6 @@ hr{
     margin-top: 15px;
     font-size: 0.8em ;
     color: #CAFE9D;
-
-
 }
 
 .caliming-text{
