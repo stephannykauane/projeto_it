@@ -1,9 +1,17 @@
 <script setup lang="ts">
 
+import calimingAPI from '../../services/CalimingAPIClient';
 import ButtonSairAtom from '../atoms/ButtonSairAtom.vue';
 import HeaderTextAtom from '../atoms/HeaderTextAtom.vue';
 import SeparatorAtom from '../atoms/SeparatorAtom.vue';
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
+
+const handleLogout = () => {
+    calimingAPI.logout()
+    router.push('/home')
+}
 
 </script>
 
@@ -14,7 +22,7 @@ import SeparatorAtom from '../atoms/SeparatorAtom.vue';
              <HeaderTextAtom class="caliming" text="Caliming"/>
             </div>    
             <div class="button-Sair">
-              <ButtonSairAtom text="Sair"/> 
+              <ButtonSairAtom text="Sair" @click="handleLogout"/> 
             </div>       
         </div>   
     </div>

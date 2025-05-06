@@ -26,6 +26,7 @@ defineProps ({
    padding: 3em 3em;
    margin: 1em 3.5em;
    transition: .3s;
+   max-height: 200px;
 }
 
 h3 {
@@ -42,6 +43,7 @@ h3 {
         padding: 3em 2.6em;
         margin: 1em 3em;
         border-radius: 0.8em;
+        max-height: 170px;
     }
 
     h3 {
@@ -51,13 +53,14 @@ h3 {
 
 @media screen and (max-width: 1200px){
     .text-box{
-        padding: 1em 2.6em;
-        margin: 1em 3em;
+        padding: 1em 2.5em;
+        margin: 1em 2.2em;
         border-radius: 0.8em;
+        max-height: 160px;
     }
 
-    p {
-        font-size: 0.8em;
+    h3 {
+        font-size: 0.9em;
     }
 }
 
@@ -67,9 +70,10 @@ h3 {
         padding: 2em 1em;
         margin: 1em 1em;
         border-radius: 0.8em;
+        max-height: 150px;
     }
 
-    p {
+    h3 {
         font-size: 0.8em;
     }
 }
@@ -81,19 +85,19 @@ h3 {
         border-radius: 0.8em;
     }
 
-    p {
+    h3 {
         font-size: 0.8em;
     }
 } 
 
 @media screen and (max-width: 480px){
     .text-box{
-        padding: 1em 0.5em;
+        padding: 1em 0.2em;
         margin: 1em 0.3em;
-        border-radius: 0.8em;
+        border-radius: 0.6em;
     }
 
-    p {
+    h3 {
         font-size: 0.7em;
     }
 } 

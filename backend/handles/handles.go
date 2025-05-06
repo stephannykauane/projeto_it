@@ -3,7 +3,9 @@ package handles
 import (
 	"encoding/json"
 	"net/http"
-	_ "github.com/lib/pq"	
+	"time"
+
+	_ "github.com/lib/pq"
 	"github.com/stephannykauane/projeto_it/backend/headers"
 	"github.com/stephannykauane/projeto_it/backend/services"
 )
@@ -25,9 +27,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	services.EfetuarLogin(w, r)
-
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"message": "Login successful"}`))
 }
 
 
@@ -67,7 +66,7 @@ func Analise(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func Excel (w http.ResponseWriter, r *http.Request){
+func Excel(w http.ResponseWriter, r *http.Request){
 	
 	headers.SetHeaders(w)
 
@@ -89,5 +88,39 @@ func Excel (w http.ResponseWriter, r *http.Request){
 func ListaCalculos (w http.ResponseWriter, r *http.Request){
 	headers.SetHeaders(w)
 	services.ListarCalculos(w, r)
+}
+
+func PerfilUsuario (w http.ResponseWriter, r *http.Request){
+
+	headers.SetHeaders(w)
+
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write([]byte(`{"error": "Method not allowed"}`))
+		return
+	}
+
+	services.GetDadosUsuario(w, r)
+}
+
+func Logout (w http.ResponseWriter, r *http.Request) {
+
+	http.SetCookie(w, &http.Cookie{
+		Name: "token",
+		Value: "", 
+		Expires: time.Now().Add(-1 * time.Hour),
+		HttpOnly: true,
+		Secure: true,
+		SameSite: http.SameSiteStrictMode,
+		Path: "/",
+	})
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Logout successfull"))
 }
 

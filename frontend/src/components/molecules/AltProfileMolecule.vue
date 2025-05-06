@@ -1,14 +1,34 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import ButtonAlterarAtom from '../atoms/ButtonAlterarAtom.vue';
 import TextAtom from '../atoms/TextAtom.vue';
+import calimingAPI from '../../services/CalimingAPIClient';
 
 
 const editandoNome = ref(false);
 const editandoSenha = ref(false);
 
+const emailEmail = ref('')
+const nomeNome = ref('')
+
 const alternarEdicaoNome = () => { editandoNome.value = !editandoNome.value; };
 const alternarEdicaoSenha = () => { editandoSenha.value = !editandoSenha.value; };
+
+
+const buscarDados = async () => {
+  try {
+     const usuario = await calimingAPI.getDados()
+     
+     emailEmail.value = usuario.email
+     nomeNome.value = usuario.nome
+  } catch (error) {
+    console.error('Erro ao buscar dados do usuário', error)
+  }
+}
+
+onMounted (() => {
+  buscarDados()
+})
 </script>
 
 <template>
@@ -17,7 +37,7 @@ const alternarEdicaoSenha = () => { editandoSenha.value = !editandoSenha.value; 
     <div class="alt">
       <div class="container-alt-email">
         <TextAtom class="primeiro" text="SEU EMAIL"/>
-        <TextAtom class="segundo" text="seuemail@email.com"/>
+        <TextAtom v-model="emailEmail" class="segundo" text="seuemail@email.com"/>
       </div>
     </div>
 
@@ -25,10 +45,10 @@ const alternarEdicaoSenha = () => { editandoSenha.value = !editandoSenha.value; 
       <div class="container-alt-nome">
         <TextAtom class="primeiro" text="SEU NOME"/>
         <template v-if="!editandoNome">
-          <TextAtom class="segundo" text="seu nome"/>
+          <TextAtom v-model="nomeNome" class="segundo" text="seu nome"/>
         </template>
         <template v-else>
-          <TextAtom class="segundo" text="seu nome"/>
+          <TextAtom v-model="nomeNome" class="segundo" text="seu nome"/>
           <div class="input">
             <input type="text" class="input-alterar" placeholder="Digite seu novo nome">
           </div>          

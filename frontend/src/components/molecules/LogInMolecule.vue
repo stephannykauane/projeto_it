@@ -1,7 +1,32 @@
 <script setup lang="ts">
+import { useRouter } from 'vue-router';
 import ButtonGreenAtom from '../atoms/ButtonGreenAtom.vue';
 import InputAtom from '../atoms/InputAtom.vue';
 import TextAtom from '../atoms/TextAtom.vue';
+import { ref } from 'vue'
+import calimingAPI from '../../services/CalimingAPIClient';
+
+
+const email = ref('')
+const senha = ref('')
+const erro = ref('')
+const router = useRouter()
+
+const handleLogin = async () => {
+    try {
+        const success = await calimingAPI.login({
+            email: email.value,
+            senha: senha.value
+        })
+        if (success) {
+            router.push('/calculator')
+        } else {
+            erro.value = 'Email ou senha inválidos'
+        }
+    } catch (err) {
+        erro.value = 'Erro inesperado: ' + (err instanceof Error ? err.message : String(err))
+    }
+}
 
 </script>
 
@@ -16,15 +41,15 @@ import TextAtom from '../atoms/TextAtom.vue';
     </div>  
     <div class="inputs-login">
         <div>
-           <InputAtom class="email" placeholder="Email"/> 
+           <InputAtom class="email" placeholder="Email" v-model="email"/> 
         </div>
         <div>
-            <InputAtom class="senha" placeholder="Senha"/>
-        </div>
-        
+            <InputAtom class="senha" placeholder="Senha" v-model="senha" type="password"/>
+        </div>  
     </div>  
+    <div v-if="erro"> {{ erro }}</div>
     <div class="button-entrar">
-        <ButtonGreenAtom text="Entrar"/>
+        <ButtonGreenAtom text="Entrar" @click="handleLogin"/>
     </div>  
     <div class="conta-text">
      <TextAtom text="Não possui conta?"></TextAtom>

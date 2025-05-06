@@ -34,8 +34,8 @@ import TextBoxAtom from '../atoms/TextBoxAtom.vue';
 
 @media screen and (max-width:1200px){
     .text-box-molecule{
-        width: 109.7%;
-        margin-left: -3em;
+        width: 107.2%;
+        margin-left: -2.2em;
     
     }
 }

@@ -4,6 +4,7 @@ node_modules/
 
 # Go
 bin/
+.env/
 
 #Docker 
 data/
