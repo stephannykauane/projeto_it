@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
 	"github.com/joho/godotenv"
 	"github.com/stephannykauane/projeto_it/backend/db"
+	"github.com/stephannykauane/projeto_it/backend/headers"
 	"github.com/stephannykauane/projeto_it/backend/routes"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Erro ao carregar .env")
-	}
+    err := godotenv.Load()
+    if err != nil {
+        log.Fatal("Erro ao carregar .env")
+    }
 	db.Database()
 
 	mux := http.NewServeMux()
@@ -25,5 +27,5 @@ func main() {
 	})
 	
 	fmt.Println("Servidor Go iniciado em http://localhost:8080")
-	http.ListenAndServe(":8080", mux)
+	http.ListenAndServe(":8080", headers.SetHeaders(mux))
 }

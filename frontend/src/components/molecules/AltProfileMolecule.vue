@@ -37,7 +37,7 @@ onMounted (() => {
     <div class="alt">
       <div class="container-alt-email">
         <TextAtom class="primeiro" text="SEU EMAIL"/>
-        <TextAtom v-model="emailEmail" class="segundo" text="seuemail@email.com"/>
+        <TextAtom v-model="emailEmail" class="segundo" :text="emailEmail"/>
       </div>
     </div>
 
@@ -45,10 +45,10 @@ onMounted (() => {
       <div class="container-alt-nome">
         <TextAtom class="primeiro" text="SEU NOME"/>
         <template v-if="!editandoNome">
-          <TextAtom v-model="nomeNome" class="segundo" text="seu nome"/>
+          <TextAtom v-model="nomeNome" class="segundo" :text="nomeNome"/>
         </template>
         <template v-else>
-          <TextAtom v-model="nomeNome" class="segundo" text="seu nome"/>
+          <TextAtom v-model="nomeNome" class="segundo" :text="nomeNome" />
           <div class="input">
             <input type="text" class="input-alterar" placeholder="Digite seu novo nome">
           </div>          

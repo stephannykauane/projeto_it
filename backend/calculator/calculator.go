@@ -1,6 +1,7 @@
 package calculator
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"math"
@@ -8,60 +9,60 @@ import (
 	"github.com/stephannykauane/projeto_it/backend/types"
 )
 
-
-
-func Calcular(i interface{}) {
-	switch v := i.(type) {
-	case types.SatBases:
-		CalculoSatBases(v)
-    case types.Aluminio:
-		CalculoAluminio(v)
-	default:
-		fmt.Println("Tipo invalido")
-	}
+type ResultadoCalculo struct {
+	Result sql.NullFloat64
+	SatAtual sql.NullFloat64
 }
 
-func CalculoSatBases(a types.SatBases) (float64, float64) {
+
+func CalculoSatBases(a types.SatBases) (sql.NullFloat64, sql.NullFloat64) {
 
 	s := a.Calcio + a.Magnesio + a.Potassio
 	V1 := (s / a.Ctc) * 100
 
-	SatAtual := math.Round(V1)
+	SatAtualValor := math.Round(V1)
+
+	NC := ((a.Ctc * (a.SatD - SatAtualValor)) / 10) * float64(a.Prnt)
+
+	ResultValor := math.Round(NC)
 
 
-	fmt.Println("valor saturação atual: ", SatAtual)
-	fmt.Println("valor s atual: ", s)
-	fmt.Println("valor saturação desejada: ", a.SatD)
+	var Result, SatAtual sql.NullFloat64
 
-	NC := ((a.Ctc * (a.SatD - SatAtual)) / 10) * float64(a.Prnt)
+	if math.IsNaN(SatAtualValor) {
+		SatAtual.Valid = false
+	} else {
+		SatAtual.Float64 = SatAtualValor
+		SatAtual.Valid = true
+	}
 
-	Result := math.Round(NC)
 	
-	fmt.Println("valor ctc: ", a.Ctc)
-	fmt.Println("valor Magnesio: ", a.Magnesio)
-	fmt.Println("valor calcio: ", a.Calcio)
-	fmt.Println("valor Potassio: ", a.Potassio)
-	fmt.Println("valor prnt: ", a.Prnt)
+	if math.IsNaN(ResultValor) {
+		Result.Valid = false
+	} else {
+		Result.Float64 = ResultValor
+		Result.Valid = true
+	}
 
 	return Result, SatAtual
 
 }
 
-
-func CalculoAluminio(b types.Aluminio) float64 {
+func CalculoAluminio(b types.Aluminio) (sql.NullFloat64) {
 	var NC float64
 
 	if b.Ctc > 4.0 && b.Argila > 15 && (b.Calcio+b.Magnesio) < 2.0 {
 
 		NC = ((2 * b.Aluminio) + 2 - (b.Calcio + b.Magnesio)) * float64(b.Prnt)
-		fmt.Println("esse foi utilizado!")
+		
 
 	} else {
 		NC = (2 * b.Aluminio) * float64(b.Prnt)
-		fmt.Println("esse AQUI foi utilizado!")
+		
 	}
-	Result := math.Round(NC)
-
+	ResultValor := math.Round(NC)
+    
+   
 	fmt.Println("valor ctc: ", b.Ctc)
 	fmt.Println("valor argila: ", b.Argila)
 	fmt.Println("valor calcio: ", b.Calcio)
@@ -69,17 +70,26 @@ func CalculoAluminio(b types.Aluminio) float64 {
 	fmt.Println("valor aluminio: ", b.Aluminio)
 	fmt.Println("valor prnt: ", b.Prnt)
 	fmt.Println("nc: ", NC)
+	var Result sql.NullFloat64
+
+    if math.IsNaN(ResultValor) {
+        Result.Valid = false
+    } else {
+        Result.Float64 = ResultValor
+        Result.Valid = true
+    }
+   
+
+	fmt.Println("resultado aluminio:", Result)
 
 	return Result
 }
 
+func Calculando(jsonData []byte, MetodoID int) (ResultadoCalculo, error) {
 
-
-func Calculando(jsonData []byte, MetodoID int) (float64, float64, error) {
-	
 	var err error
-	var Resultado float64
-    var SatAtual float64
+	var resultado ResultadoCalculo
+
 	switch MetodoID {
 	case 1:
 		var satbases types.SatBases
@@ -87,10 +97,10 @@ func Calculando(jsonData []byte, MetodoID int) (float64, float64, error) {
 
 		if err != nil {
 
-			return 0, 0, fmt.Errorf("erro ao decodificar JSON para SatBases: %v", err)
+			return resultado, fmt.Errorf("erro ao decodificar JSON para SatBases: %v", err)
 		}
 
-		Resultado, SatAtual = CalculoSatBases(satbases)
+		resultado.Result, resultado.SatAtual =  CalculoSatBases(satbases) 
 
 	case 2:
 		var aluminio types.Aluminio
@@ -98,16 +108,16 @@ func Calculando(jsonData []byte, MetodoID int) (float64, float64, error) {
 
 		if err != nil {
 
-			return 0, 0, fmt.Errorf("erro ao decodificar JSON para Aluminio: %v", err)
+			return resultado, fmt.Errorf("erro ao decodificar JSON para Aluminio: %v", err)
 		}
 
-		Resultado = CalculoAluminio(aluminio)
+		resultado.Result = CalculoAluminio(aluminio)
 
 	default:
 
-		return 0, 0, fmt.Errorf("metodoID desconhecido")
+		return resultado, fmt.Errorf("metodoID desconhecido")
 	}
 
-	return Resultado, SatAtual, nil
+	return resultado, nil
 
 }

@@ -52,6 +52,7 @@ type AnaliseRequest struct {
 	SatD        float64 `json:"sat_desejada"`
 	Prnt        int     `json:"prnt"`
 	Ctc         float64 `json:"ctc"`
+	Resultado   float64 `json:"resultado"`
 }
 
 type Metodo struct {
@@ -64,6 +65,7 @@ type CalculoDetalhes struct {
 	MetodoID     int       `json:"id_metodo"`
 	Potassio     float64   `json:"potassio"`
 	Magnesio     float64   `json:"magnesio"`
+	Aluminio     float64   `json:"aluminio"`
 	Calcio       float64   `json:"calcio"`
 	SatDesejada  float64   `json:"sat_desejada"`
 	Prnt         float64   `json:"prnt"`

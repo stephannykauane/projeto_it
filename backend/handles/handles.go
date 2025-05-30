@@ -1,20 +1,16 @@
 package handles
 
 import (
-	"encoding/json"
 	"net/http"
 	"time"
-
 	_ "github.com/lib/pq"
-	"github.com/stephannykauane/projeto_it/backend/headers"
 	"github.com/stephannykauane/projeto_it/backend/services"
+	
 )
 
 
 
 func Login(w http.ResponseWriter, r *http.Request) {
-
-    headers.SetHeaders(w)
 
 	if r.Method == http.MethodOptions {
 		w.WriteHeader(http.StatusOK)
@@ -32,13 +28,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
 
-    headers.SetHeaders(w)
-
-    if r.Method == http.MethodOptions {
-        w.WriteHeader(http.StatusOK)
-        return
-    }
-
     if r.Method != http.MethodPost {
         w.WriteHeader(http.StatusMethodNotAllowed)
         w.Write([]byte(`{"error": "Method not allowed"}`))
@@ -47,29 +36,17 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 
 	services.EfetuarSignUp(w, r)
 
-    w.WriteHeader(http.StatusCreated)
-    w.Write([]byte(`{"message": "Usuário cadastrado com sucesso!"}`))
 }
 
 
 func Analise(w http.ResponseWriter, r *http.Request) {
-
-    headers.SetHeaders(w)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-
 	services.SaveAnalise(w, r)
-
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"message": "Análise e cálculo realizados com sucesso",
-	})
 }
+
+
 
 func Excel(w http.ResponseWriter, r *http.Request){
 	
-	headers.SetHeaders(w)
-
 	if r.Method == http.MethodOptions {
         w.WriteHeader(http.StatusOK)
         return
@@ -85,19 +62,13 @@ func Excel(w http.ResponseWriter, r *http.Request){
 
 }
 
+
+
 func ListaCalculos (w http.ResponseWriter, r *http.Request){
-	headers.SetHeaders(w)
 	services.ListarCalculos(w, r)
 }
 
 func PerfilUsuario (w http.ResponseWriter, r *http.Request){
-
-	headers.SetHeaders(w)
-
-	if r.Method == http.MethodOptions {
-		w.WriteHeader(http.StatusNoContent)
-		return
-	}
 
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -115,7 +86,7 @@ func Logout (w http.ResponseWriter, r *http.Request) {
 		Value: "", 
 		Expires: time.Now().Add(-1 * time.Hour),
 		HttpOnly: true,
-		Secure: true,
+		Secure: false,
 		SameSite: http.SameSiteStrictMode,
 		Path: "/",
 	})

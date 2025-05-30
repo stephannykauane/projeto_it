@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"time"
+
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/stephannykauane/projeto_it/backend/calculator"
 	datab "github.com/stephannykauane/projeto_it/backend/db"
@@ -22,6 +23,7 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 	var metodo types.Metodo
 	var values types.AnaliseRequest
 
+	fmt.Println("Chegamos aqui")
 
 	jsonData, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -30,34 +32,34 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
+	fmt.Println("passei por aqui")
 
 	if err := json.Unmarshal(jsonData, &metodo); err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao decodificar JSON para Metodo: %v", err), http.StatusBadRequest)
 		return
 	}
 
-	
 	if err := json.Unmarshal(jsonData, &values); err != nil {
 		http.Error(w, "Erro ao deserializar JSON para AnaliseRequest", http.StatusBadRequest)
 		return
-	} 
+	}
+
+	
+	fmt.Println("metodo: ", metodo)
+	fmt.Println("valores: ", values)
 
 
 	templateFile := ""
-	outputFile := ""
 
 	switch metodo.MetodoID {
 	case 1:
-		templateFile = "RecomendaçãoCalagem.xlsx"
-		outputFile = "RecomendaçãoCalagem.xlsx"
+		templateFile = "/home/stephanny/projeto_it/backend/cmd/RecomendaçãoCalagem.xlsx"
 	case 2:
-		templateFile = "RecomendaçãoDeCalagem.xlsx"
-		outputFile = "RecomendaçãoDeCalagem.xlsx"
+		templateFile = "/home/stephanny/projeto_it/backend/cmd/RecomendaçãoDeCalagem.xlsx"
 	default:
 		http.Error(w, "MetodoID inválido", http.StatusBadRequest)
 		return
 	}
-
 
 	f, err := excelize.OpenFile(templateFile)
 	if err != nil {
@@ -65,21 +67,21 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-
 	sheetName := "Recomendação de Calagem"
 	if index, err := f.GetSheetIndex(sheetName); err != nil || index == -1 {
 		f.NewSheet(sheetName)
 	}
-    
-	resultado, satAtual, err := calculator.Calculando(jsonData, metodo.MetodoID)
+
+	resultado, err := calculator.Calculando(jsonData, metodo.MetodoID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao calcular:%v", err), http.StatusInternalServerError)
-		
+
 		return
 	}
+    fmt.Println("result:", resultado.Result.Float64)
 
 	data := map[string]interface{}{}
-	fmt.Println("result:", resultado);
+	
 	switch metodo.MetodoID {
 	case 1:
 		data = map[string]interface{}{
@@ -87,23 +89,25 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 			"B10": values.Magnesio,
 			"C10": values.Calcio,
 			"D10": values.SatD,
-			"E10": satAtual,
-			"F10": values.SatD,
+			"E10": resultado.SatAtual.Float64,
+			"F10": values.Prnt,
 			"G10": values.Ctc,
-			"H10": resultado,
+			"H10": values.Resultado,
 		}
 	case 2:
-		
+
 		data = map[string]interface{}{
 			"A10": values.Argila,
 			"B10": values.Magnesio,
 			"C10": values.Calcio,
-			"D10": values.Prnt,
-			"E10": values.Ctc,
-			"F10": resultado,
+			"D10": values.Aluminio,
+			"E10": values.Prnt,
+			"F10": values.Ctc,
+			"G10": values.Resultado,
 		}
 	}
 
+	fmt.Println("dados da planilha: ", data)
 
 	for cell, value := range data {
 		if err := f.SetCellValue(sheetName, cell, value); err != nil {
@@ -111,91 +115,91 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-
-	if err := f.SaveAs(outputFile); err != nil {
-		http.Error(w, fmt.Sprintf("Erro ao salvar arquivo: %v", err), http.StatusInternalServerError)
+    w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+   
+	if err := f.Write(w); err != nil {
+		http.Error(w, fmt.Sprintln("Erro ao salvar arquivo: %w", err), http.StatusInternalServerError)
 		return
 	}
 
-	
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(fmt.Sprintf("Planilha gerada com sucesso: %s", outputFile)))
 }
 
+func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 
-func SaveAnalise (w http.ResponseWriter, r *http.Request){
+	db := datab.ConnectDB()
+	defer db.Close()
 
-		db := datab.ConnectDB()
-		defer db.Close()
-	
-		
-		email := middleware.GetUserEmailFromContext(r.Context())
-	
-		var userID int
-		err := db.QueryRow(`SELECT id FROM "Usuario" WHERE email=$1`, email).Scan(&userID)
-		if err != nil {
-			http.Error(w, "Usuário não encontrado", http.StatusUnauthorized)
-			return
-		}
-	
-		var analiseRequest types.AnaliseRequest
-		var metodo types.Metodo
-	
-		jsonData, err := io.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Erro ao ler corpo da requisição: %v", err), http.StatusBadRequest)
-			return
-		}
-	
-		err = json.Unmarshal(jsonData, &analiseRequest)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Erro ao decodificar JSON: %v", err), http.StatusBadRequest)
-			return
-		}
-	
-	
-		query := `INSERT INTO "Analise" ("id_usuario", "potassio", "magnesio", "aluminio", "calcio", "sat_desejada", "prnt", "ctc", "argila") 
+	email := middleware.GetUserEmailFromContext(r.Context())
+
+	var userID int
+	err := db.QueryRow(`SELECT id FROM "Usuario" WHERE email=$1`, email).Scan(&userID)
+	if err != nil {
+		http.Error(w, "Usuário não encontrado", http.StatusUnauthorized)
+		return
+	}
+
+	var analiseRequest types.AnaliseRequest
+	var metodo types.Metodo
+
+	jsonData, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Erro ao ler corpo da requisição: %v", err), http.StatusBadRequest)
+		return
+	}
+
+	err = json.Unmarshal(jsonData, &analiseRequest)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Erro ao decodificar JSON: %v", err), http.StatusBadRequest)
+		return
+	}
+
+	query := `INSERT INTO "Analise" ("id_usuario", "potassio", "magnesio", "aluminio", "calcio", "sat_desejada", "prnt", "ctc", "argila") 
 				  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING "id"`
-	
-		var analiseID int
-		err = db.QueryRow(query, userID, analiseRequest.Potassio, analiseRequest.Magnesio, analiseRequest.Aluminio, analiseRequest.Calcio, analiseRequest.SatD, analiseRequest.Prnt, analiseRequest.Ctc, analiseRequest.Argila).Scan(&analiseID)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Erro ao inserir análise: %v", err), http.StatusInternalServerError)
-			return
-		}
-	
-		err = json.Unmarshal(jsonData, &metodo)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Erro ao decodificar JSON para Metodo: %v", err), http.StatusBadRequest)
-			return
-		}
-	
-		resultado, _, err := calculator.Calculando(jsonData, metodo.MetodoID)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Erro ao calcular: %v", err), http.StatusInternalServerError)
-			return
-		}
-	
-		calculoQuery := `INSERT INTO "Calculo" ("id_analise", "resultado", "data_calculo", "id_metodo") 
+
+	var analiseID int
+	err = db.QueryRow(query, userID, analiseRequest.Potassio, analiseRequest.Magnesio, analiseRequest.Aluminio, analiseRequest.Calcio, analiseRequest.SatD, analiseRequest.Prnt, analiseRequest.Ctc, analiseRequest.Argila).Scan(&analiseID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Erro ao inserir análise: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.Unmarshal(jsonData, &metodo)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Erro ao decodificar JSON para Metodo: %v", err), http.StatusBadRequest)
+		return
+	}
+
+	resultado, err := calculator.Calculando(jsonData, metodo.MetodoID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Erro ao calcular: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	calculoQuery := `INSERT INTO "Calculo" ("id_analise", "resultado", "data_calculo", "id_metodo") 
 						 VALUES ($1, $2, current_date, $3)`
-		_, err = db.Exec(calculoQuery, analiseID, resultado, metodo.MetodoID)
-		if err != nil {
-			http.Error(w, fmt.Sprintf("Erro ao inserir cálculo: %v", err), http.StatusInternalServerError)
-			return
-		}
-	
-		w.WriteHeader(http.StatusCreated)
+	_, err = db.Exec(calculoQuery, analiseID, resultado.Result.Float64, metodo.MetodoID)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Erro ao inserir cálculo: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"message":   "Análise e cálculo realizados com sucesso",
+		"resultado": resultado.Result.Float64,
+	})
 }
 
-
-func Hash (senha string) string{
+func Hash(senha string) string {
 	h := sha256.New()
 	h.Write([]byte(senha))
 
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func EfetuarLogin (w http.ResponseWriter, r *http.Request){
+func EfetuarLogin(w http.ResponseWriter, r *http.Request) {
 	var jwtKey = os.Getenv("JWT_SECRET")
 
 	var user types.Usuario
@@ -212,7 +216,7 @@ func EfetuarLogin (w http.ResponseWriter, r *http.Request){
 	err = db.QueryRow(`SELECT senha FROM "Usuario" WHERE email=$1`, user.Email).Scan(&storedHash)
 	if err != nil {
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
-		
+
 		return
 	}
 
@@ -228,7 +232,6 @@ func EfetuarLogin (w http.ResponseWriter, r *http.Request){
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
 	}
-   
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(jwtKey))
@@ -242,7 +245,7 @@ func EfetuarLogin (w http.ResponseWriter, r *http.Request){
 		Value:    tokenString,
 		Expires:  expirationTime,
 		HttpOnly: true,
-		Secure:   true,
+		Secure:   false,
 		SameSite: http.SameSiteStrictMode,
 	})
 
@@ -250,27 +253,54 @@ func EfetuarLogin (w http.ResponseWriter, r *http.Request){
 
 }
 
-func EfetuarSignUp (w http.ResponseWriter, r *http.Request){
+func EfetuarSignUp(w http.ResponseWriter, r *http.Request) {
 
+	var jwtKey = os.Getenv("JWT_SECRET")
 	var user types.Usuario
 
-    if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-        http.Error(w, "Erro ao decodificar JSON: "+err.Error(), http.StatusBadRequest)
-        return
-    }
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, "Erro ao decodificar JSON: "+err.Error(), http.StatusBadRequest)
+		return
+	}
 
-    hashed := Hash(user.Senha)
-    db := datab.ConnectDB()
-    defer db.Close()
+	hashed := Hash(user.Senha)
+	db := datab.ConnectDB()
+	defer db.Close()
 
-    _, err := db.Exec(`INSERT INTO "Usuario"(email, senha, nome) VALUES ($1, $2, $3)`, user.Email, hashed, user.Nome)
-    if err != nil {
-        http.Error(w, "Erro ao executar query: " + err.Error(), http.StatusInternalServerError)
-        return
-    }
+	_, err := db.Exec(`INSERT INTO "Usuario"(email, senha, nome) VALUES ($1, $2, $3)`, user.Email, hashed, user.Nome)
+	if err != nil {
+		http.Error(w, "Erro ao executar query: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	expirationTime := time.Now().Add(24 * time.Hour)
+	claims := &types.Claims{
+		Email: user.Email,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString([]byte(jwtKey))
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "token",
+		Value:    tokenString,
+		Expires:  expirationTime,
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteStrictMode,
+	})
+
+	json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
 }
 
-func GetDadosUsuario (w http.ResponseWriter, r *http.Request) {
+func GetDadosUsuario(w http.ResponseWriter, r *http.Request) {
 	db := datab.ConnectDB()
 	defer db.Close()
 
@@ -278,7 +308,7 @@ func GetDadosUsuario (w http.ResponseWriter, r *http.Request) {
 
 	var user types.Usuario
 
-	err:= db.QueryRow(`SELECT nome, email FROM "Usuario" where email = $1`, email).Scan(&user.Nome, &user.Email)
+	err := db.QueryRow(`SELECT nome, email FROM "Usuario" where email = $1`, email).Scan(&user.Nome, &user.Email)
 
 	if err != nil {
 		http.Error(w, "Usuário não encontrado", http.StatusNotFound)
@@ -291,10 +321,13 @@ func GetDadosUsuario (w http.ResponseWriter, r *http.Request) {
 }
 
 func ListarCalculos(w http.ResponseWriter, r *http.Request) {
+	
+
 	db := datab.ConnectDB()
 	defer db.Close()
 
 	email := middleware.GetUserEmailFromContext(r.Context())
+
 	var userID int
 	err := db.QueryRow(`SELECT id FROM "Usuario" WHERE email=$1`, email).Scan(&userID)
 	if err != nil {
@@ -309,6 +342,7 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 			c.id_metodo, 
 			a.potassio, 
 			a.magnesio, 
+			a.aluminio,
 			a.calcio, 
 			a.sat_desejada, 
 			a.prnt, 
@@ -325,6 +359,7 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer rows.Close()
+	
 
 	var calculos []types.CalculoDetalhes
 	for rows.Next() {
@@ -335,6 +370,7 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 			&calculo.MetodoID,
 			&calculo.Potassio,
 			&calculo.Magnesio,
+			&calculo.Aluminio,
 			&calculo.Calcio,
 			&calculo.SatDesejada,
 			&calculo.Prnt,
@@ -348,6 +384,14 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 		calculos = append(calculos, calculo)
 	}
 
+	
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(calculos)
+
+	jsEnc := json.NewEncoder(w)
+	err = jsEnc.Encode(calculos)
+	if err != nil {
+		fmt.Println(err)
+	}
+
 }

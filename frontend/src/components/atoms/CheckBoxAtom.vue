@@ -7,7 +7,7 @@
      />
      <span class="custom-checkbox"></span>
      <span class="label-text"><slot /></span>
-     <ButtonExportarAtom class="button-exportar" text="Exportar para Excel"></ButtonExportarAtom>
+     <ButtonExportarAtom class="button-exportar" text="Exportar para Excel" @click="$emit('exportar')"></ButtonExportarAtom>
    </label>
  </template>
  
@@ -21,6 +21,8 @@ import ButtonExportarAtom from './ButtonExportarAtom.vue';
    },
  })
  defineEmits(['update:modelValue'])
+
+
  </script>
  
  <style scoped>
@@ -34,12 +36,26 @@ import ButtonExportarAtom from './ButtonExportarAtom.vue';
    text-align: start;
    cursor: pointer;
    margin: 1em 0 1em 0;
+   transition: 300ms;
  }
  
  .checkbox-atom input {
    display: none;
  }
 
+
+ .checkbox-atom:hover {
+  border-color: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  background-color:#d4ebc0;
+  transition: 300ms;
+}
+
+.checkbox-atom:focus,
+.checkbox-atom:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  transition: 300ms;
+}
 
  .custom-checkbox {
    width: 1.2em;
