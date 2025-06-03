@@ -62,6 +62,21 @@ func Excel(w http.ResponseWriter, r *http.Request){
 
 }
 
+func DadosUsuario (w http.ResponseWriter, r *http.Request) {
+	
+	if r.Method == http.MethodOptions {
+        w.WriteHeader(http.StatusOK)
+        return
+    }
+
+    if r.Method != http.MethodPatch{
+        w.WriteHeader(http.StatusMethodNotAllowed)
+        w.Write([]byte(`{"error": "Method not allowed"}`))
+        return
+    }
+	services.AlterarDados(w, r)
+}
+
 
 
 func ListaCalculos (w http.ResponseWriter, r *http.Request){

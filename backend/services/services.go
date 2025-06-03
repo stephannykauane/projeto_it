@@ -253,6 +253,70 @@ func EfetuarLogin(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func AlterarDados(w http.ResponseWriter, r *http.Request) {
+	db := datab.ConnectDB()
+	defer db.Close()
+
+	email := middleware.GetUserEmailFromContext(r.Context())
+
+	
+	var userID int
+	err := db.QueryRow(`SELECT id FROM "Usuario" WHERE email = $1`, email).Scan(&userID)
+	if err != nil {
+		http.Error(w, "Usuário não encontrado", http.StatusUnauthorized)
+		return
+	}
+
+	
+	var user types.Usuario
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		http.Error(w, "Erro ao decodificar JSON: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	
+	if user.Nome == "" && user.Senha == "" {
+		http.Error(w, "Nenhum dado para alterar foi fornecido", http.StatusBadRequest)
+		return
+	}
+
+	
+	query := `UPDATE "Usuario" SET `
+	params := []interface{}{}
+	paramIndex := 1
+
+	if user.Nome != "" {
+		query += fmt.Sprintf("nome = $%d", paramIndex)
+		params = append(params, user.Nome)
+		paramIndex++
+	}
+
+	if user.Senha != "" {
+		if len(params) > 0 {
+			query += ", "
+		}
+		hashed := Hash(user.Senha)
+		query += fmt.Sprintf("senha = $%d", paramIndex)
+		params = append(params, hashed)
+		paramIndex++
+	}
+
+	query += fmt.Sprintf(" WHERE id = $%d", paramIndex)
+	params = append(params, userID)
+
+	
+	_, err = db.Exec(query, params...)
+	if err != nil {
+		http.Error(w, "Erro ao atualizar dados: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Dados atualizados com sucesso",
+	})
+}
+
 func EfetuarSignUp(w http.ResponseWriter, r *http.Request) {
 
 	var jwtKey = os.Getenv("JWT_SECRET")
