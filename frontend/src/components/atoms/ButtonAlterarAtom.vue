@@ -47,14 +47,46 @@ export default {
     background-color: #414e34d7;
 }
 
-
+@media screen and (max-width: 820px) {
+    .profile-alterar{
+        font-size: 0.8em;
+        min-width: 140px;
+    }
+    
+}
 @media screen and (max-width: 769px) {
     .profile-alterar{
         font-size: 0.8em;
+        min-width: 110px;
     }
     
 }
 
+@media screen and (max-width: 650px) {
+    .profile-alterar{
+    
+        min-width: 100px;
+    }
+    
+}
+
+@media screen and (max-width: 600px) {
+    .profile-alterar{
+    
+        min-width: 80px;
+        padding: 0 1em;
+    }
+    
+}
+
+@media screen and (max-width: 580px) {
+    .profile-alterar{
+    
+        min-width: 60px;
+        padding: 0;
+    }
+    
+}
 
 </style>
 

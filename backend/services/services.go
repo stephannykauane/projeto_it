@@ -44,10 +44,8 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	
 	fmt.Println("metodo: ", metodo)
 	fmt.Println("valores: ", values)
-
 
 	templateFile := ""
 
@@ -78,24 +76,20 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-    fmt.Println("result:", resultado.Result.Float64)
+	fmt.Println("result:", resultado.Result.Float64)
 
 	data := map[string]interface{}{}
-	
+
 	switch metodo.MetodoID {
 	case 1:
 		data = map[string]interface{}{
-			"A10": values.Potassio,
-			"B10": values.Magnesio,
-			"C10": values.Calcio,
-			"D10": values.SatD,
-			"E10": resultado.SatAtual.Float64,
-			"F10": values.Prnt,
-			"G10": values.Ctc,
-			"H10": values.Resultado,
+			"A11": values.SatA,
+			"B10": values.SatD,
+			"C10": values.Prnt,
+			"D11": values.Ctc,
+			"E11": values.Resultado,
 		}
 	case 2:
-
 		data = map[string]interface{}{
 			"A10": values.Argila,
 			"B10": values.Magnesio,
@@ -115,8 +109,8 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-    w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-   
+	w.Header().Set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
 	if err := f.Write(w); err != nil {
 		http.Error(w, fmt.Sprintln("Erro ao salvar arquivo: %w", err), http.StatusInternalServerError)
 		return
@@ -140,6 +134,7 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 
 	var analiseRequest types.AnaliseRequest
 	var metodo types.Metodo
+	var areaRequest types.Area
 
 	jsonData, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -151,13 +146,29 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao decodificar JSON: %v", err), http.StatusBadRequest)
 		return
-	}
+	} 
 
-	query := `INSERT INTO "Analise" ("id_usuario", "potassio", "magnesio", "aluminio", "calcio", "sat_desejada", "prnt", "ctc", "argila") 
-				  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING "id"`
+
+	var areaID int64
+
+	areaQuery := `INSERT INTO "Area" ("id_usuario", "consultor", "propriedade", "area") VALUES ($1, $2, $3, $4) RETURNING id`
+	
+	err = db.QueryRow(areaQuery, userID, areaRequest.Consultor, areaRequest.Propriedade, areaRequest.Area).Scan(&areaID)
+	
+	if err != nil {
+		fmt.Println("Erro ao inserir área:", err)
+
+		return
+	}
+	
+	fmt.Println("ID da área inserida:", areaID)
+	
+
+	query := `INSERT INTO "Analise" ("id_usuario", "magnesio", "aluminio", "calcio", "sat_desejada", "prnt", "ctc", "argila", "sat_atual", "teor_ca", "teor_mg", "caO", "mgO", "mg_desejada", "ca_desejada", "id_area") 
+				  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING "id"`
 
 	var analiseID int
-	err = db.QueryRow(query, userID, analiseRequest.Potassio, analiseRequest.Magnesio, analiseRequest.Aluminio, analiseRequest.Calcio, analiseRequest.SatD, analiseRequest.Prnt, analiseRequest.Ctc, analiseRequest.Argila).Scan(&analiseID)
+	err = db.QueryRow(query, userID, analiseRequest.Magnesio, analiseRequest.Aluminio, analiseRequest.Calcio, analiseRequest.SatD, analiseRequest.Prnt, analiseRequest.Ctc, analiseRequest.Argila, analiseRequest.SatA, analiseRequest.TeorCa, analiseRequest.TeorMg, analiseRequest.CaO, analiseRequest.MgO, analiseRequest.MgDesejada, analiseRequest.CaDesejada, areaID).Scan(&analiseID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao inserir análise: %v", err), http.StatusInternalServerError)
 		return
@@ -177,6 +188,7 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 
 	calculoQuery := `INSERT INTO "Calculo" ("id_analise", "resultado", "data_calculo", "id_metodo") 
 						 VALUES ($1, $2, current_date, $3)`
+
 	_, err = db.Exec(calculoQuery, analiseID, resultado.Result.Float64, metodo.MetodoID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao inserir cálculo: %v", err), http.StatusInternalServerError)
@@ -187,7 +199,7 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 
 	json.NewEncoder(w).Encode(map[string]interface{}{
-		"message":   "Análise e cálculo realizados com sucesso",
+		"message":   "Àrea, análise e cálculo realizados com sucesso",
 		"resultado": resultado.Result.Float64,
 	})
 }
@@ -259,7 +271,6 @@ func AlterarDados(w http.ResponseWriter, r *http.Request) {
 
 	email := middleware.GetUserEmailFromContext(r.Context())
 
-	
 	var userID int
 	err := db.QueryRow(`SELECT id FROM "Usuario" WHERE email = $1`, email).Scan(&userID)
 	if err != nil {
@@ -267,20 +278,17 @@ func AlterarDados(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	
 	var user types.Usuario
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		http.Error(w, "Erro ao decodificar JSON: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	
 	if user.Nome == "" && user.Senha == "" {
 		http.Error(w, "Nenhum dado para alterar foi fornecido", http.StatusBadRequest)
 		return
 	}
 
-	
 	query := `UPDATE "Usuario" SET `
 	params := []interface{}{}
 	paramIndex := 1
@@ -304,7 +312,6 @@ func AlterarDados(w http.ResponseWriter, r *http.Request) {
 	query += fmt.Sprintf(" WHERE id = $%d", paramIndex)
 	params = append(params, userID)
 
-	
 	_, err = db.Exec(query, params...)
 	if err != nil {
 		http.Error(w, "Erro ao atualizar dados: "+err.Error(), http.StatusInternalServerError)
@@ -385,7 +392,6 @@ func GetDadosUsuario(w http.ResponseWriter, r *http.Request) {
 }
 
 func ListarCalculos(w http.ResponseWriter, r *http.Request) {
-	
 
 	db := datab.ConnectDB()
 	defer db.Close()
@@ -403,15 +409,7 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 		SELECT 
 			c.resultado, 
 			c.data_calculo, 
-			c.id_metodo, 
-			a.potassio, 
-			a.magnesio, 
-			a.aluminio,
-			a.calcio, 
-			a.sat_desejada, 
-			a.prnt, 
-			a.ctc, 
-			a.argila
+			c.id_metodo
 		FROM "Calculo" c
 		JOIN "Analise" a ON c.id_analise = a.id
 		WHERE a.id_usuario = $1
@@ -423,7 +421,6 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer rows.Close()
-	
 
 	var calculos []types.CalculoDetalhes
 	for rows.Next() {
@@ -432,14 +429,6 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 			&calculo.Resultado,
 			&calculo.DataCalculo,
 			&calculo.MetodoID,
-			&calculo.Potassio,
-			&calculo.Magnesio,
-			&calculo.Aluminio,
-			&calculo.Calcio,
-			&calculo.SatDesejada,
-			&calculo.Prnt,
-			&calculo.Ctc,
-			&calculo.Argila,
 		)
 		if err != nil {
 			http.Error(w, "Erro ao ler os dados: "+err.Error(), http.StatusInternalServerError)
@@ -447,8 +436,6 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 		}
 		calculos = append(calculos, calculo)
 	}
-
-	
 
 	w.Header().Set("Content-Type", "application/json")
 

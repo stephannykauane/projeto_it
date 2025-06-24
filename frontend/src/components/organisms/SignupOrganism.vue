@@ -51,7 +51,30 @@ import SignUpMolecule from '../molecules/SignUpMolecule.vue';
 
 @media screen and (max-width: 769px){
     .container-signup-form{
-        padding: 0 6em;
+        padding: 0 9em;
+        max-height: 650px ;
+    }
+
+    .signup-form{
+        padding: 7em 3em;
+    }
+}
+
+@media screen and (max-width: 520px){
+    .container-signup-form{
+        padding: 0 4em;
+        max-height: 650px ;
+    }
+
+    .signup-form{
+        padding: 7em 3em;
+    }
+}
+
+
+@media screen and (max-width: 540px){
+    .container-signup-form{
+        padding: 0 2em;
         max-height: 650px ;
     }
 

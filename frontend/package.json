@@ -9,6 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@formkit/addons": "^1.6.9",
+    "@formkit/themes": "^1.6.9",
+    "@formkit/vue": "^1.6.9",
+    "@vueform/vueform": "^1.12.10",
     "date-fns": "^4.1.0",
     "pinia": "^2.3.1",
     "pinia-plugin-persistedstate": "^4.2.0",
@@ -18,6 +22,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
+    "sass": "^1.89.1",
     "vite": "^6.0.5"
   }
 }

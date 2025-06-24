@@ -196,6 +196,35 @@ class CalimingAPIClient {
             throw new Error("Erro ao gerar Excel")
         }
     }
+
+    async AlterarDadosUsuario ({ nome, senha }) {
+        const body = {}
+
+        if (nome) body.nome = nome
+        if (senha) body.senha = senha
+
+        if (Object.keys(body).length === 0) {
+            throw new Error("Nenhum dado informado para alterar.")
+        }
+
+        const resp = await this.sendRequest({
+            method: 'PATCH',
+            path: '/alterar',
+            body
+        })
+
+        if (resp.ok){
+            const data = await resp.json()
+            console.log("Dados alterados com sucesso", data)
+            return true
+        } else {
+            const erro = await resp.text()
+            console.error("Erro ao alterar dados: ", erro)
+            throw new Error("Erro ao alterar dados")
+        }
+
+
+    }
 }
 
 const calimingAPI = new CalimingAPIClient()

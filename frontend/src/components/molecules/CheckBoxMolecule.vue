@@ -76,6 +76,47 @@ onMounted(() => {
 p{
     color: #185C37;
 }
+
+@media screen and (max-width: 1280px) {
+  .checkbox-molecule {
+    margin: 0 8em;
+  }
+}
+
+
+@media screen and (max-width: 769px) {
+  .checkbox-molecule {
+    margin: 0 5em;
+  }
+
+  .check {
+    font-size: 0.7em;
+
+  } 
+}
+
+@media screen and (max-width: 540px) {
+  .checkbox-molecule {
+    margin: 0 3.6em;
+  }
+
+  .check {
+    font-size: 0.7em;
+
+  } 
+}
+
+
+@media screen and (max-width: 480px) {
+  .checkbox-molecule {
+    margin: 0 1em;
+  }
+
+  .check {
+    font-size: 0.7em;
+
+  } 
+}
 </style>
 
 

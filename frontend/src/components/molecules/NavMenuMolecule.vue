@@ -105,4 +105,10 @@ const route = useRoute();
         font-size: 0.7em;
     }
 }
+
+@media screen and (max-width: 375px) {
+    .menu a {
+        font-size: 0.6em;
+    }
+}
 </style>

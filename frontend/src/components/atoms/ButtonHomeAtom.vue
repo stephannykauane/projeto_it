@@ -41,7 +41,7 @@ export default {
   font-family: 'Arya', serif;
   color: white;
   border: 2px solid #ffffffc7;
-  border-radius: 50px;
+  border-radius: 0.5em;
   text-align: center;
   transition: box-shadow 200ms ease-in-out, border-color 200ms;
 }

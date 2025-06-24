@@ -44,7 +44,7 @@ const handleCadastro = async () => {
     </div>
     <hr/>
     <div class="experiencia-text">
-        <TextAtom text="Faça parte dessa experiência inesquecível."/>                      
+        <TextAtom text="Faça parte dessa experiência"/>                      
     </div>  
     <div class="inputs-login">
         <div>
@@ -57,7 +57,7 @@ const handleCadastro = async () => {
             <InputAtom class="senha" placeholder="Senha" type="password" v-model="senha"/>
         </div>
         <div>
-            <InputAtom class="confirmar-senha" v-model="confirmarSenha" type="password" placeholder="Confirmar Senha" />
+            <InputAtom class="confirmar-senha" v-model="confirmarSenha" type="password" placeholder="Confirmar senha" />
         </div>
    
     </div>  
@@ -71,17 +71,17 @@ const handleCadastro = async () => {
         <TextAtom class="entrar" text="Entrar."/>
      </router-link>
     </div>      
-    <div class="prosseguir">
-        <router-link to="/calculator">
-            <TextAtom text="Prosseguir sem conta ➜"></TextAtom>
-        </router-link>
-    </div>
+
 </div>
 </template>
 
-<style>
+<style scoped>
 
 .experiencia-text {
+    animation: TextAtom 2s ease-out forwards;
+}
+
+.caliming-text, hr {
     animation: TextAtom 2s ease-out forwards;
 }
 
@@ -137,7 +137,7 @@ const handleCadastro = async () => {
 
 .experiencia-text{
     color: #CAFE9D;
-    margin-top: 20px;
+    margin-top: 1em;
 }
 
 .inputs-login div{
@@ -163,17 +163,7 @@ hr{
     color: #3a4630c7;
 }
 
-.prosseguir {
-    font-size: 12px;
-    margin-top: 10px;
-    cursor: pointer;
-    transition: transform 0.5s ease-in-out;
-}
 
-.prosseguir:hover{
-    transform: translateX(10px);
-
-}
 
 
 
@@ -193,8 +183,10 @@ hr{
 
 @media screen and (max-width: 480px) {
     .login-molecule{
-        margin: 5px;
+        margin: 0px;
     }
     
 }
+
+
 </style>

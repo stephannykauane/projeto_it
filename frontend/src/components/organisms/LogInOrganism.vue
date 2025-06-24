@@ -29,7 +29,7 @@ import LogInMolecule from '../molecules/LogInMolecule.vue';
     width: 100%;
     justify-content: center;
     background-color: rgba(147, 168, 126, 0.6);
-    padding: 12em 2.7em;
+    padding: 12.6em 2.7em;
     border-radius: 0.5em ;
     box-shadow: 0.5px 5px 30px rgb(0, 0, 0, 0.25);;
 }
@@ -49,11 +49,42 @@ import LogInMolecule from '../molecules/LogInMolecule.vue';
 
 @media screen and (max-width: 769px){
     .container-login-form{
-        padding: 5em 6em;
+        padding: 5em 9em;
     }
 
     .login-form{
         padding: 7em 3em;
+    }
+}
+
+@media screen and (max-width: 700px){
+    .container-login-form{
+        padding: 5em 8em;
+    }
+
+    .login-form{
+        padding: 7em 2em;
+    }
+}
+
+
+@media screen and (max-width: 540px){
+    .container-login-form{
+        padding: 1em 3em;
+    }
+
+    .login-form{
+        padding: 7em 2em;
+    }
+}
+
+@media screen and (max-width: 520px){
+    .container-login-form{
+        padding: 5em 4em;
+    }
+
+    .login-form{
+        padding: 7em 2em;
     }
 }
 

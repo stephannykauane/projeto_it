@@ -38,7 +38,7 @@
     border: 2px solid transparent;
     cursor: pointer;
     width: 100%;
-    border-radius: 10em;
+    border-radius: 1em;
     padding: 0.4em 5em;
     margin: 5px;
     transition: .5s;

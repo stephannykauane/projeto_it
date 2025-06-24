@@ -10,6 +10,8 @@ const editandoSenha = ref(false);
 
 const emailEmail = ref('')
 const nomeNome = ref('')
+const novoNome = ref ('')
+const novaSenha = ref ('')
 
 const alternarEdicaoNome = () => { editandoNome.value = !editandoNome.value; };
 const alternarEdicaoSenha = () => { editandoSenha.value = !editandoSenha.value; };
@@ -25,6 +27,29 @@ const buscarDados = async () => {
     console.error('Erro ao buscar dados do usuário', error)
   }
 }
+
+const Alterar = async () => {
+  try {
+    await calimingAPI.AlterarDadosUsuario({
+      nome: novoNome.value,
+      senha: novaSenha.value
+    })
+
+    await buscarDados()
+  } catch (error) {
+    console.error("Erro ao alterar os dados solicitados", error)
+  }
+}
+
+const alterarNome = () => {
+  alternarEdicaoNome();
+  Alterar();
+};
+
+const alterarSenha = () => {
+  alternarEdicaoSenha();
+  Alterar();
+};
 
 onMounted (() => {
   buscarDados()
@@ -50,12 +75,12 @@ onMounted (() => {
         <template v-else>
           <TextAtom v-model="nomeNome" class="segundo" :text="nomeNome" />
           <div class="input">
-            <input type="text" class="input-alterar" placeholder="Digite seu novo nome">
+            <input type="text" class="input-alterar" placeholder="Digite seu novo nome" v-model="novoNome">
           </div>          
         </template>
       </div>
       <div class="button-alterar">
-        <ButtonAlterarAtom text="Alterar nome" @click="alternarEdicaoNome"/>
+        <ButtonAlterarAtom text="Alterar nome" @click="alterarNome"/>
       </div>
     </div>
 
@@ -68,12 +93,12 @@ onMounted (() => {
         <template v-else>
           <TextAtom class="segundo" text="*********"/>
           <div class="input">
-            <input type="password" class="input-alterar" placeholder="Digite sua nova senha">
+            <input type="password" class="input-alterar" placeholder="Digite sua nova senha" v-model="novaSenha">
           </div>
         </template>
       </div>
       <div class="button-alterar">
-        <ButtonAlterarAtom text="Alterar senha" @click="alternarEdicaoSenha"/>
+        <ButtonAlterarAtom text="Alterar senha" @click="alterarSenha"/>
       </div>
     </div>
   </div>

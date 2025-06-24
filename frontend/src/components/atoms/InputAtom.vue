@@ -18,8 +18,8 @@ defineProps({
 <style>
 .text-input{
   width: 100%;
-  margin: 0.5em 0.2em;
-  padding: 0.6em 2em;
+  margin: 0.1em 0.1em;
+  padding: 0.6em 1em;
   font-family:'Konkhmer Sleokchher';
   font-size: 1.1em;
   color: aliceblue;
@@ -27,11 +27,15 @@ defineProps({
   cursor: pointer;
   outline: none;
   border: 2px solid transparent;
-  border-radius: 2em;
+  text-align: left;
+  border-radius: 0.7em;
   background-color: rgb(184, 200, 170, 0.60);
 
 }
 
+input {
+  text-align: left;
+}
 
 
 .text-input:focus{
@@ -39,12 +43,14 @@ defineProps({
     box-shadow: 0 0 15px rgba(238, 241, 237, 0.6);
 } 
 
-
-@media  screen and (max-width: 480px) {
+@media  screen and (max-width: 769px) {
    .text-input{
     padding: 0.7em 2em;
+    font-size: 0.8em;
    }
   
 }
+
+
 
 </style>

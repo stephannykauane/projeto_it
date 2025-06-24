@@ -40,7 +40,7 @@ export default {
     width: 100%;
     padding: 0.7em;
     margin: 0 6em;
-    border-radius: 10em;
+    border-radius: 1em;
     transition: .5s;
  
 }

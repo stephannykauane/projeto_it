@@ -4,39 +4,35 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"math"
-
 	"github.com/stephannykauane/projeto_it/backend/types"
+	"math"
 )
 
 type ResultadoCalculo struct {
-	Result sql.NullFloat64
+	Result   sql.NullFloat64
 	SatAtual sql.NullFloat64
 }
 
-
 func CalculoSatBases(a types.SatBases) (sql.NullFloat64, sql.NullFloat64) {
 
-	s := a.Calcio + a.Magnesio + a.Potassio
-	V1 := (s / a.Ctc) * 100
-
-	SatAtualValor := math.Round(V1)
-
-	NC := ((a.Ctc * (a.SatD - SatAtualValor)) / 10) * float64(a.Prnt)
+	NC := ((a.SatD - a.SatD) * a.Ctc) / float64(a.Prnt)
 
 	ResultValor := math.Round(NC)
 
+	fmt.Println("saturacao d: ", a.SatD)
+	fmt.Println("saturacao a: ", a.SatA)
+	fmt.Println("ctc: ", a.Ctc)
+	fmt.Println("prnt: ", a.Prnt)
 
 	var Result, SatAtual sql.NullFloat64
 
-	if math.IsNaN(SatAtualValor) {
+	if math.IsNaN(a.SatA) {
 		SatAtual.Valid = false
 	} else {
-		SatAtual.Float64 = SatAtualValor
+		SatAtual.Float64 = a.SatA
 		SatAtual.Valid = true
 	}
 
-	
 	if math.IsNaN(ResultValor) {
 		Result.Valid = false
 	} else {
@@ -48,41 +44,87 @@ func CalculoSatBases(a types.SatBases) (sql.NullFloat64, sql.NullFloat64) {
 
 }
 
-func CalculoAluminio(b types.Aluminio) (sql.NullFloat64) {
+func CalculoAluminio(b types.Aluminio) sql.NullFloat64 {
 	var NC float64
 
 	if b.Ctc > 4.0 && b.Argila > 15 && (b.Calcio+b.Magnesio) < 2.0 {
 
 		NC = ((2 * b.Aluminio) + 2 - (b.Calcio + b.Magnesio)) * float64(b.Prnt)
-		
 
 	} else {
 		NC = (2 * b.Aluminio) * float64(b.Prnt)
-		
+
 	}
 	ResultValor := math.Round(NC)
-    
-   
-	fmt.Println("valor ctc: ", b.Ctc)
-	fmt.Println("valor argila: ", b.Argila)
-	fmt.Println("valor calcio: ", b.Calcio)
-	fmt.Println("valor magnesio: ", b.Magnesio)
-	fmt.Println("valor aluminio: ", b.Aluminio)
-	fmt.Println("valor prnt: ", b.Prnt)
-	fmt.Println("nc: ", NC)
+
 	var Result sql.NullFloat64
 
-    if math.IsNaN(ResultValor) {
-        Result.Valid = false
-    } else {
-        Result.Float64 = ResultValor
-        Result.Valid = true
-    }
-   
+	if math.IsNaN(ResultValor) {
+		Result.Valid = false
+	} else {
+		Result.Float64 = ResultValor
+		Result.Valid = true
+	}
 
 	fmt.Println("resultado aluminio:", Result)
 
 	return Result
+}
+
+func CalculoSatGeneric(
+	ctc float64,
+	teor float64,
+	desejado float64,
+	conversao float64,
+	kgBase float64,
+	oxido float64,
+	prnt float64,
+) sql.NullFloat64 {
+
+	cmolNecessario := (ctc * (desejado / 100)) - teor
+	kgElemento := kgBase * cmolNecessario
+	kgCorretivo := kgElemento * conversao
+	xDoKgCorretivo := RegraDeTres(oxido, 100, kgCorretivo)
+	resultado := RegraDeTres(prnt, xDoKgCorretivo, 100)
+
+	var result sql.NullFloat64
+
+	if math.IsNaN(resultado) {
+		result.Valid = false
+	} else {
+		result.Float64 = resultado
+		result.Valid = true
+	}
+
+	return result
+}
+
+func CalculoSatCalcio(c types.SatCalcio) sql.NullFloat64 {
+	return CalculoSatGeneric(
+		c.Ctc,
+		c.TeorCa,
+		c.CaDesejada,
+		1.4,
+		400.78,
+		c.CaO,
+		float64(c.Prnt),
+	)
+}
+
+func CalculoSatMagnesio(c types.SatMagnesio) sql.NullFloat64 {
+	return CalculoSatGeneric(
+		c.Ctc,
+		c.TeorMg,
+		c.MgDesejada,
+		1.6667,
+		243.05,
+		c.MgO,
+		float64(c.Prnt),
+	)
+}
+
+func RegraDeTres(a float64, b float64, c float64) float64 {
+	return (b * c) / a
 }
 
 func Calculando(jsonData []byte, MetodoID int) (ResultadoCalculo, error) {
@@ -100,7 +142,7 @@ func Calculando(jsonData []byte, MetodoID int) (ResultadoCalculo, error) {
 			return resultado, fmt.Errorf("erro ao decodificar JSON para SatBases: %v", err)
 		}
 
-		resultado.Result, resultado.SatAtual =  CalculoSatBases(satbases) 
+		resultado.Result, resultado.SatAtual = CalculoSatBases(satbases)
 
 	case 2:
 		var aluminio types.Aluminio
@@ -112,6 +154,27 @@ func Calculando(jsonData []byte, MetodoID int) (ResultadoCalculo, error) {
 		}
 
 		resultado.Result = CalculoAluminio(aluminio)
+	case 3:
+		var Calcio types.SatCalcio
+		err = json.Unmarshal(jsonData, &Calcio)
+
+		if err != nil {
+
+			return resultado, fmt.Errorf("erro ao decodificar JSON para Calcio: %v", err)
+		}
+
+		resultado.Result = CalculoSatCalcio(Calcio)
+
+	case 4:
+		var Magnesio types.SatMagnesio
+		err = json.Unmarshal(jsonData, &Magnesio)
+
+		if err != nil {
+
+			return resultado, fmt.Errorf("erro ao decodificar JSON para Magnesio: %v", err)
+		}
+
+		resultado.Result = CalculoSatMagnesio(Magnesio)
 
 	default:
 

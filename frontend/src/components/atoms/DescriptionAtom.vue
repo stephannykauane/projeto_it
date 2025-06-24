@@ -29,7 +29,7 @@ defineProps({
   background-color: hsla(90, 19%, 58%, 0.6);
   border-radius: 0.5rem;
   width: 100%;
-  max-width: 600px; 
+  max-width: 700px; 
   min-height: 120px; 
   padding: 2.1em 2em;
   margin: 5px 0;
@@ -57,6 +57,7 @@ p {
   flex-grow: 1; 
 
 }
+
 
 
 @media screen and (max-width: 600px) {

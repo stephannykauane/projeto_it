@@ -17,11 +17,12 @@ defineEmits(["update:modelValue"]);
 
 <template>
   <div class="text-input-molecule">
-    <div class="text">
+    <div class="text-textInput">
       <h2>{{ text }}</h2>  
     </div>
-    <div class="input">
+    <div class="input-textInput">
         <InputAtom 
+      style="text-align:left;"
       :type="type" 
       :placeholder="placeholder" 
       :modelValue="modelValue"
@@ -37,36 +38,37 @@ defineEmits(["update:modelValue"]);
 @import url('https://fonts.googleapis.com/css?family=Konkhmer Sleokchher');
 
 .text-input-molecule {
+  border: 2px solid;
   display: flex;
   justify-content: center;
-  align-items: center;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
-  margin: 1em 0;
-  gap: 2em;
+  padding: 1em;
+  border-radius: 0.5em;
+  border-color: #8aa07b;
+  margin: 0.2em 0;
   transition: .3s;
 }
 
-.text {
+.text-textInput {
   font-family: 'Konkhmer Sleokchher'; 
-  font-size: 1.2em;
-  text-align: end;
+  font-size: 1em;
   display: flex;
+  text-align: left;
   align-items: center;
-  justify-content: flex-end;
-  width: 20%;
+  width: 100%;
   transition: .3s;
 }
 
-.input {
-  width: 80%;
+.input-textInput {
+  width: 100%;
   font-size: 1em;
   transition: .3s;
 }
 
 
 :deep(.text-input) {
-    border-radius: 1em;
+    border-radius: 0.7em;
     background-color: rgba(103, 120, 87, 1) ;
     text-align: center;
 }

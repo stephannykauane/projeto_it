@@ -26,6 +26,7 @@ import DescriptionAtom from '../atoms/DescriptionAtom.vue';
   <style>
   
 .container-description-molecule{
+  width: 100%;
   display: flex;
   justify-content: center;
   flex-direction: column;

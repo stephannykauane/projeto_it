@@ -47,7 +47,7 @@ import RightHomeMolecule from '../molecules/RightHomeMolecule.vue';
   padding-right: 7em;
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 769px) {
   .left-and-right {
     flex-direction: column;
   }
@@ -55,7 +55,7 @@ import RightHomeMolecule from '../molecules/RightHomeMolecule.vue';
   .left {
     width: 100%;
     margin: 0; 
-    padding: 1em;
+    padding: 0em;
   }
 
   .right {
