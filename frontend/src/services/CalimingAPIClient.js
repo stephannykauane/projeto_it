@@ -13,11 +13,11 @@ class CalimingAPIClient {
         const headers = {
             'Content-Type': 'application/json',
         }
-    
+
         if (token) {
             headers['Authorization'] = `Bearer ${token}`
         }
-    
+
         try {
             const resp = await fetch(`${this.baseUrl}${path}`, {
                 method,
@@ -25,20 +25,28 @@ class CalimingAPIClient {
                 body: body ? JSON.stringify(body) : undefined,
                 credentials: 'include',
             });
+
+            if (resp.status === 401) {
+                alert("Sessão expirada. Redirecionando para login.")
+                localStorage.removeItem('token')
+                this.token = null
+                window.location.href = '/login'
+                return
+              }
             return resp;
         } catch (err) {
             console.error('Erro na requisição: ', err)
-            throw err; 
+            throw err;
         }
     }
 
     async login({ email, senha }) {
         const resp = await this.sendRequest({
-            method: 'POST', 
+            method: 'POST',
             path: '/login',
             body: { email, senha }
         })
-        
+
         if (resp.ok) {
             const data = await resp.json()
 
@@ -46,11 +54,10 @@ class CalimingAPIClient {
             localStorage.setItem('token', data.token)
 
             this.token = data.token
-            console.log('token recebido:', data.token)
             this.user.email = email
 
-            return true 
-        } else { 
+            return true
+        } else {
             const erro = await resp.text()
             console.error("Erro ao logar: ", erro)
 
@@ -76,7 +83,7 @@ class CalimingAPIClient {
             path: '/signup',
             body: { email, senha, nome }
         })
-    
+
         if (resp.ok) {
             const data = await resp.json()
 
@@ -84,10 +91,9 @@ class CalimingAPIClient {
             localStorage.setItem('token', data.token)
 
             this.token = data.token
-            console.log('token recebido:', data.token)
             this.user.email = email
 
-            return true 
+            return true
 
         } else {
             const erro = await resp.text()
@@ -96,8 +102,8 @@ class CalimingAPIClient {
         }
     }
 
-    async getDados () {
-        const resp = await this.sendRequest ({
+    async getDados() {
+        const resp = await this.sendRequest({
             method: 'GET',
             path: '/profile'
         })
@@ -111,47 +117,60 @@ class CalimingAPIClient {
         }
     }
 
-    async gerarCalculo ({ ctc, magnesio, calcio, argila, prnt, potassio, aluminio, sat_desejada, id_metodo }) {
+    async gerarCalculo({ consultor, propriedade, area, ctc, prnt, sat_desejada, sat_atual, argila, calcio, aluminio, magnesio, caO, mgO, ca_desejada, mg_desejada, teor_ca, teor_mg, id_metodo }) {
         const resp = await this.sendRequest({
             method: 'POST',
-            path:'/analise',
+            path: '/analise',
             body: {
+                consultor,
+                propriedade,
+                area,
                 ctc,
-                magnesio,
-                calcio,
-                argila,
                 prnt,
-                potassio,
+                sat_desejada,
+                sat_atual,
+                argila,
+                calcio,
                 aluminio,
-                id_metodo,
-                sat_desejada,  
+                magnesio,
+                caO,
+                mgO,
+                ca_desejada,
+                mg_desejada,
+                teor_ca,
+                teor_mg,
+                id_metodo
             }
         })
 
-        console.log("aluminio na requisição", aluminio)
-
         if (resp.ok) {
+            const text = await resp.text()
 
-            const data = await resp.json()
-            return data.resultado
-        } else {
+            if (!text) {
+                throw new Error("Resposta vazia ao gerar cálculo.")
+            }
 
-            const erro = await resp.text()
-            console.error("Erro ao fazer analise:", erro)
-            throw new Error("Erro ao fazer analise")
+            let data
+            try {
+                data = JSON.parse(text)
+            } catch (e) {
+                console.error("Erro ao parsear JSON:", text)
+                throw new Error("Resposta do servidor não é um JSON válido.")
+            }
 
+            return data
         }
 
     }
 
-    async getListaCalculos () {
-        const resp = await this.sendRequest ({
+    async getListaCalculos(page = 1, limit = 10) {
+        const resp = await this.sendRequest({
             method: 'GET',
-            path:'/listar'
+            path: `/listar?page=${page}&limit=${limit}`
         })
-    
+
         const text = await resp.text()
-    
+
         if (resp.ok) {
             if (!text) {
                 throw new Error("Resposta vazia.")
@@ -168,36 +187,39 @@ class CalimingAPIClient {
         }
     }
 
-    async gerarExcel (payload, filename = 'Recomendacao.xlsx') {
+    async gerarExcel(payload, filename = 'Recomendacao.xlsx') {
 
-        console.log("Dados enviados para SaveExcel:", JSON.stringify(payload));
-        
-        const resp = await this.sendRequest({
-            method: 'POST',
-            path: '/excel',
-            body: payload
-        })
+        try {
+            const resp = await this.sendRequest({
+                method: 'POST',
+                path: '/excel',
+                body: payload
+            });
 
-        console.log("payload do excel", payload)
-    
-        if (resp.ok) {
-            const blob = await resp.blob()
-            const url = window.URL.createObjectURL(blob)
-            const link = document.createElement('a')
-            link.href = url
-            link.setAttribute('download', filename)
-            document.body.appendChild(link)
-            link.click()
-            link.remove()
-            console.log('Download realizado com sucesso')
-        } else {
-            const erro = await resp.text()
-            console.error("Erro ao gerar Excel:", erro)
-            throw new Error("Erro ao gerar Excel")
+
+            if (resp.ok) {
+                const blob = await resp.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', filename);
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                console.log('Download realizado com sucesso');
+            } else {
+                const erro = await resp.text();
+                console.error("Erro ao gerar Excel:", erro);
+                throw new Error("Erro ao gerar Excel");
+            }
+        } catch (err) {
+            console.error("Erro ao gerar excel no componente:", err);
+            throw new Error("Erro ao gerar Excel (try/catch)");
         }
     }
 
-    async AlterarDadosUsuario ({ nome, senha }) {
+
+    async AlterarDadosUsuario({ nome, senha }) {
         const body = {}
 
         if (nome) body.nome = nome
@@ -213,7 +235,7 @@ class CalimingAPIClient {
             body
         })
 
-        if (resp.ok){
+        if (resp.ok) {
             const data = await resp.json()
             console.log("Dados alterados com sucesso", data)
             return true

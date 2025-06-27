@@ -15,14 +15,10 @@ type ResultadoCalculo struct {
 
 func CalculoSatBases(a types.SatBases) (sql.NullFloat64, sql.NullFloat64) {
 
-	NC := ((a.SatD - a.SatD) * a.Ctc) / float64(a.Prnt)
+	NC := ((a.SatD - a.SatA) * a.Ctc) / float64(a.Prnt)
 
-	ResultValor := math.Round(NC)
+	ResultValor := math.Round(NC*100)/100
 
-	fmt.Println("saturacao d: ", a.SatD)
-	fmt.Println("saturacao a: ", a.SatA)
-	fmt.Println("ctc: ", a.Ctc)
-	fmt.Println("prnt: ", a.Prnt)
 
 	var Result, SatAtual sql.NullFloat64
 
@@ -40,6 +36,8 @@ func CalculoSatBases(a types.SatBases) (sql.NullFloat64, sql.NullFloat64) {
 		Result.Valid = true
 	}
 
+
+
 	return Result, SatAtual
 
 }
@@ -55,7 +53,7 @@ func CalculoAluminio(b types.Aluminio) sql.NullFloat64 {
 		NC = (2 * b.Aluminio) * float64(b.Prnt)
 
 	}
-	ResultValor := math.Round(NC)
+	ResultValor := math.Round(NC*100) / 100
 
 	var Result sql.NullFloat64
 
@@ -65,9 +63,7 @@ func CalculoAluminio(b types.Aluminio) sql.NullFloat64 {
 		Result.Float64 = ResultValor
 		Result.Valid = true
 	}
-
-	fmt.Println("resultado aluminio:", Result)
-
+   
 	return Result
 }
 
@@ -85,7 +81,7 @@ func CalculoSatGeneric(
 	kgElemento := kgBase * cmolNecessario
 	kgCorretivo := kgElemento * conversao
 	xDoKgCorretivo := RegraDeTres(oxido, 100, kgCorretivo)
-	resultado := RegraDeTres(prnt, xDoKgCorretivo, 100)
+	resultado := math.Round(RegraDeTres(prnt, xDoKgCorretivo, 100)*100) / 100
 
 	var result sql.NullFloat64
 

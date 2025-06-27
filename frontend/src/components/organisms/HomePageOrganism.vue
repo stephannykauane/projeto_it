@@ -30,6 +30,7 @@ import RightHomeMolecule from '../molecules/RightHomeMolecule.vue';
   height: auto;
   flex-direction: column;
 }
+
 .left-and-right{
   display: flex;
   width: 100%;

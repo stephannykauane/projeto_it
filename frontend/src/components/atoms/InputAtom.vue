@@ -3,7 +3,8 @@
     class='text-input' 
     v-model="modelValue"
     :type='type' 
-    :placeholder='placeholder'>
+    :placeholder='placeholder'
+    >
 </template>
 
 <script setup>

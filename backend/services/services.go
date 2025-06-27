@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -23,16 +24,12 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 	var metodo types.Metodo
 	var values types.AnaliseRequest
 
-	fmt.Println("Chegamos aqui")
-
 	jsonData, err := io.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "Erro ao ler o corpo da requisição", http.StatusBadRequest)
 		return
 	}
 	defer r.Body.Close()
-
-	fmt.Println("passei por aqui")
 
 	if err := json.Unmarshal(jsonData, &metodo); err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao decodificar JSON para Metodo: %v", err), http.StatusBadRequest)
@@ -44,16 +41,22 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("metodo: ", metodo)
-	fmt.Println("valores: ", values)
+	basePath := os.Getenv("TEMPLATE_DIR")
+	if basePath == "" {
+		basePath = "./cmd" 
+	}
 
 	templateFile := ""
 
 	switch metodo.MetodoID {
 	case 1:
-		templateFile = "/home/stephanny/projeto_it/backend/cmd/RecomendaçãoCalagem.xlsx"
+		templateFile = filepath.Join(basePath, "RecomendaçãoSaturacaoBases.xlsx")
 	case 2:
-		templateFile = "/home/stephanny/projeto_it/backend/cmd/RecomendaçãoDeCalagem.xlsx"
+		templateFile = filepath.Join(basePath, "RecomendaçãoAluminio.xlsx")
+	case 3:
+		templateFile = filepath.Join(basePath, "RecomendaçãoSaturacaoCalcio.xlsx")
+	case 4:
+		templateFile = filepath.Join(basePath, "RecomendaçãoSaturacaoMagnesio.xlsx")
 	default:
 		http.Error(w, "MetodoID inválido", http.StatusBadRequest)
 		return
@@ -83,14 +86,20 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 	switch metodo.MetodoID {
 	case 1:
 		data = map[string]interface{}{
+			"B3":  values.Propriedade,
+			"B4":  values.Area,
+			"B5":  values.Consultor,
 			"A11": values.SatA,
-			"B10": values.SatD,
-			"C10": values.Prnt,
+			"B11": values.SatD,
+			"C11": values.Prnt,
 			"D11": values.Ctc,
 			"E11": values.Resultado,
 		}
 	case 2:
 		data = map[string]interface{}{
+			"B3":  values.Propriedade,
+			"B4":  values.Area,
+			"B5":  values.Consultor,
 			"A10": values.Argila,
 			"B10": values.Magnesio,
 			"C10": values.Calcio,
@@ -99,9 +108,31 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 			"F10": values.Ctc,
 			"G10": values.Resultado,
 		}
+	case 3:
+		data = map[string]interface{}{
+			"B3":  values.Propriedade,
+			"B4":  values.Area,
+			"B5":  values.Consultor,
+			"A11": values.Ctc,
+			"B11": values.TeorCa,
+			"C11": values.Prnt,
+			"D11": values.CaO,
+			"E11": values.CaDesejada,
+			"F11": values.Resultado,
+		}
+	case 4:
+		data = map[string]interface{}{
+			"B3":  values.Propriedade,
+			"B4":  values.Area,
+			"B5":  values.Consultor,
+			"A11": values.Ctc,
+			"B11": values.TeorMg,
+			"C11": values.Prnt,
+			"D11": values.MgO,
+			"E11": values.MgDesejada,
+			"F11": values.Resultado,
+		}
 	}
-
-	fmt.Println("dados da planilha: ", data)
 
 	for cell, value := range data {
 		if err := f.SetCellValue(sheetName, cell, value); err != nil {
@@ -119,7 +150,6 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 }
 
 func SaveAnalise(w http.ResponseWriter, r *http.Request) {
-
 	db := datab.ConnectDB()
 	defer db.Close()
 
@@ -134,7 +164,6 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 
 	var analiseRequest types.AnaliseRequest
 	var metodo types.Metodo
-	var areaRequest types.Area
 
 	jsonData, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -146,28 +175,19 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao decodificar JSON: %v", err), http.StatusBadRequest)
 		return
-	} 
-
+	}
 
 	var areaID int64
-
 	areaQuery := `INSERT INTO "Area" ("id_usuario", "consultor", "propriedade", "area") VALUES ($1, $2, $3, $4) RETURNING id`
-	
-	err = db.QueryRow(areaQuery, userID, areaRequest.Consultor, areaRequest.Propriedade, areaRequest.Area).Scan(&areaID)
-	
+	err = db.QueryRow(areaQuery, userID, analiseRequest.Consultor, analiseRequest.Propriedade, analiseRequest.Area).Scan(&areaID)
 	if err != nil {
-		fmt.Println("Erro ao inserir área:", err)
-
+		http.Error(w, fmt.Sprintf("Erro ao inserir área: %v", err), http.StatusInternalServerError)
 		return
 	}
-	
-	fmt.Println("ID da área inserida:", areaID)
-	
-
-	query := `INSERT INTO "Analise" ("id_usuario", "magnesio", "aluminio", "calcio", "sat_desejada", "prnt", "ctc", "argila", "sat_atual", "teor_ca", "teor_mg", "caO", "mgO", "mg_desejada", "ca_desejada", "id_area") 
-				  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING "id"`
 
 	var analiseID int
+	query := `INSERT INTO "Analise" ("id_usuario", "magnesio", "aluminio", "calcio", "sat_desejada", "prnt", "ctc", "argila", "sat_atual", "teor_ca", "teor_mg", "caO", "mgO", "mg_desejada", "ca_desejada", "id_area") 
+			  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING "id"`
 	err = db.QueryRow(query, userID, analiseRequest.Magnesio, analiseRequest.Aluminio, analiseRequest.Calcio, analiseRequest.SatD, analiseRequest.Prnt, analiseRequest.Ctc, analiseRequest.Argila, analiseRequest.SatA, analiseRequest.TeorCa, analiseRequest.TeorMg, analiseRequest.CaO, analiseRequest.MgO, analiseRequest.MgDesejada, analiseRequest.CaDesejada, areaID).Scan(&analiseID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao inserir análise: %v", err), http.StatusInternalServerError)
@@ -187,23 +207,74 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 	}
 
 	calculoQuery := `INSERT INTO "Calculo" ("id_analise", "resultado", "data_calculo", "id_metodo") 
-						 VALUES ($1, $2, current_date, $3)`
-
+					 VALUES ($1, $2, current_date, $3)`
 	_, err = db.Exec(calculoQuery, analiseID, resultado.Result.Float64, metodo.MetodoID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao inserir cálculo: %v", err), http.StatusInternalServerError)
 		return
 	}
 
+	var calculoDetalhado types.CalculoDetalhes
+	queryDetalhe := `
+		SELECT 
+			c.resultado, 
+			c.data_calculo, 
+			c.id_metodo,
+			a.magnesio,
+			a.aluminio,
+			a.calcio,
+			a.sat_desejada,
+			a.prnt,
+			a.ctc,
+			a.argila,
+			a.sat_atual,
+			a.teor_ca,
+			a."caO",
+			a."mgO",
+			a.teor_mg,
+			a.mg_desejada,
+			a.ca_desejada,
+			ar.consultor,
+			ar.propriedade,
+			ar.area
+		FROM "Calculo" c
+		JOIN "Analise" a ON c.id_analise = a.id
+		JOIN "Area" ar ON a.id_area = ar.id
+		WHERE c.id_analise = $1
+		ORDER BY c.data_calculo DESC
+		LIMIT 1
+	`
+	err = db.QueryRow(queryDetalhe, analiseID).Scan(
+		&calculoDetalhado.Resultado,
+		&calculoDetalhado.DataCalculo,
+		&calculoDetalhado.MetodoID,
+		&calculoDetalhado.Magnesio,
+		&calculoDetalhado.Aluminio,
+		&calculoDetalhado.Calcio,
+		&calculoDetalhado.SatDesejada,
+		&calculoDetalhado.Prnt,
+		&calculoDetalhado.Ctc,
+		&calculoDetalhado.Argila,
+		&calculoDetalhado.SatAtual,
+		&calculoDetalhado.TeorCa,
+		&calculoDetalhado.CaO,
+		&calculoDetalhado.MgO,
+		&calculoDetalhado.TeorMg,
+		&calculoDetalhado.MgDesejada,
+		&calculoDetalhado.CaDesejada,
+		&calculoDetalhado.Consultor,
+		&calculoDetalhado.Propriedade,
+		&calculoDetalhado.Area,
+	)
+	if err != nil {
+		http.Error(w, "Erro ao recuperar cálculo salvo: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-
-	json.NewEncoder(w).Encode(map[string]interface{}{
-		"message":   "Àrea, análise e cálculo realizados com sucesso",
-		"resultado": resultado.Result.Float64,
-	})
+	json.NewEncoder(w).Encode(calculoDetalhado)
 }
-
 func Hash(senha string) string {
 	h := sha256.New()
 	h.Write([]byte(senha))
@@ -224,8 +295,9 @@ func EfetuarLogin(w http.ResponseWriter, r *http.Request) {
 	var storedHash string
 	db := datab.ConnectDB()
 	defer db.Close()
+	var userID int
 
-	err = db.QueryRow(`SELECT senha FROM "Usuario" WHERE email=$1`, user.Email).Scan(&storedHash)
+	err = db.QueryRow(`SELECT id, senha FROM "Usuario" WHERE email=$1`, user.Email).Scan(&userID, &storedHash)
 	if err != nil {
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 
@@ -242,6 +314,7 @@ func EfetuarLogin(w http.ResponseWriter, r *http.Request) {
 		Email: user.Email,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			Subject:   fmt.Sprint(userID),
 		},
 	}
 
@@ -257,7 +330,7 @@ func EfetuarLogin(w http.ResponseWriter, r *http.Request) {
 		Value:    tokenString,
 		Expires:  expirationTime,
 		HttpOnly: true,
-		Secure:   false,
+		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
 	})
 
@@ -338,7 +411,20 @@ func EfetuarSignUp(w http.ResponseWriter, r *http.Request) {
 	db := datab.ConnectDB()
 	defer db.Close()
 
-	_, err := db.Exec(`INSERT INTO "Usuario"(email, senha, nome) VALUES ($1, $2, $3)`, user.Email, hashed, user.Nome)
+	var exists int
+	err := db.QueryRow(`SELECT COUNT(*) FROM "Usuario" WHERE email = $1`, user.Email).Scan(&exists)
+	if err != nil {
+		http.Error(w, "Erro ao verificar email", http.StatusInternalServerError)
+		return
+	}
+	if exists > 0 {
+		http.Error(w, "Email já cadastrado", http.StatusBadRequest)
+		return
+	}
+
+	var userID int
+
+	err = db.QueryRow(`INSERT INTO "Usuario"(email, senha, nome) VALUES ($1, $2, $3) RETURNING id`, user.Email, hashed, user.Nome).Scan(&userID)
 	if err != nil {
 		http.Error(w, "Erro ao executar query: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -364,7 +450,7 @@ func EfetuarSignUp(w http.ResponseWriter, r *http.Request) {
 		Value:    tokenString,
 		Expires:  expirationTime,
 		HttpOnly: true,
-		Secure:   false,
+		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
 	})
 
@@ -392,7 +478,6 @@ func GetDadosUsuario(w http.ResponseWriter, r *http.Request) {
 }
 
 func ListarCalculos(w http.ResponseWriter, r *http.Request) {
-
 	db := datab.ConnectDB()
 	defer db.Close()
 
@@ -405,17 +490,70 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := `
-		SELECT 
-			c.resultado, 
-			c.data_calculo, 
-			c.id_metodo
+	limit := 10
+	page := 1
+
+	queryValues := r.URL.Query()
+	if p := queryValues.Get("page"); p != "" {
+		fmt.Sscanf(p, "%d", &page)
+	}
+	if l := queryValues.Get("limit"); l != "" {
+		fmt.Sscanf(l, "%d", &limit)
+	}
+
+	if page < 1 {
+		page = 1
+	}
+	if limit < 1 {
+		limit = 10
+	}
+
+	offset := (page - 1) * limit
+
+	var totalCount int
+	countQuery := `
+		SELECT COUNT(*) 
 		FROM "Calculo" c
 		JOIN "Analise" a ON c.id_analise = a.id
 		WHERE a.id_usuario = $1
 	`
+	err = db.QueryRow(countQuery, userID).Scan(&totalCount)
+	if err != nil {
+		http.Error(w, "Erro ao contar cálculos: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-	rows, err := db.Query(query, userID)
+	query := `
+		SELECT 
+			c.resultado, 
+			c.data_calculo, 
+			c.id_metodo,
+			a.magnesio,
+			a.aluminio,
+			a.calcio,
+			a.sat_desejada,
+			a.prnt,
+			a.ctc,
+			a.argila,
+			a.sat_atual,
+			a.teor_ca,
+			a."caO",
+			a."mgO",
+			a.teor_mg,
+			a.mg_desejada,
+			a.ca_desejada,
+			ar.consultor,
+			ar.propriedade,
+			ar.area
+		FROM "Calculo" c
+		JOIN "Analise" a ON c.id_analise = a.id
+		JOIN "Area" ar ON a.id_area = ar.id
+		WHERE a.id_usuario = $1
+		ORDER BY c.data_calculo DESC
+		LIMIT $2 OFFSET $3
+	`
+
+	rows, err := db.Query(query, userID, limit, offset)
 	if err != nil {
 		http.Error(w, "Erro ao consultar banco de dados: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -429,6 +567,23 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 			&calculo.Resultado,
 			&calculo.DataCalculo,
 			&calculo.MetodoID,
+			&calculo.Magnesio,
+			&calculo.Aluminio,
+			&calculo.Calcio,
+			&calculo.SatDesejada,
+			&calculo.Prnt,
+			&calculo.Ctc,
+			&calculo.Argila,
+			&calculo.SatAtual,
+			&calculo.TeorCa,
+			&calculo.CaO,
+			&calculo.MgO,
+			&calculo.TeorMg,
+			&calculo.MgDesejada,
+			&calculo.CaDesejada,
+			&calculo.Consultor,
+			&calculo.Propriedade,
+			&calculo.Area,
 		)
 		if err != nil {
 			http.Error(w, "Erro ao ler os dados: "+err.Error(), http.StatusInternalServerError)
@@ -438,11 +593,10 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-
-	jsEnc := json.NewEncoder(w)
-	err = jsEnc.Encode(calculos)
-	if err != nil {
-		fmt.Println(err)
-	}
-
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"dados":       calculos,
+		"totalCount":  totalCount,
+		"totalPages":  int((totalCount + limit - 1) / limit),
+		"currentPage": page,
+	})
 }

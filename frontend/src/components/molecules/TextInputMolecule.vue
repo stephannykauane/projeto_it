@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import InputAtom from '../atoms/InputAtom.vue';
-import TextAtom from '../atoms/TextAtom.vue';
 
 defineProps({
   text: String,        

@@ -4,20 +4,29 @@ import CheckBoxAtom from '../atoms/CheckBoxAtom.vue';
 import { ref, onMounted } from 'vue'
 import { format } from 'date-fns'
 
+const infos = ref<Array<any>>([])
+const currentPage = ref(1)
+const totalPages = ref(1)
+const limit = 10
 
-const infos = ref<Array<{ data_calculo: string; id_metodo: number; resultado: string }>>([])
-
+const metodoLabels: Record<number, string> = {
+  1: 'Saturação por Bases',
+  2: 'Alumínio Trocável',
+  3: 'Saturação de Cálcio',
+  4: 'Saturação de Magnésio'
+}
 
 const buscarCalculos = async () => {
   try {
-    infos.value = await calimingAPI.getListaCalculos()
-    
+    const res = await calimingAPI.getListaCalculos(currentPage.value, limit)
+    infos.value = res.dados
+    totalPages.value = res.totalPages
   } catch (err) {
     console.error('Erro ao buscar cálculos:', err)
   }
 }
 
-const makeExcel = async (info) => {
+const makeExcel = async (info: any) => {
   try {
     const payload = {
       ctc: info.ctc,
@@ -25,18 +34,25 @@ const makeExcel = async (info) => {
       argila: info.argila,
       calcio: info.calcio,
       prnt: info.prnt,
-      potassio: info.potassio,
       aluminio: info.aluminio,
+      caO: info.caO,
+      mgO: info.mgO,
+      teor_ca: info.teor_ca,
+      teor_mg: info.teor_mg,
+      sat_atual: info.sat_atual,
       sat_desejada: info.sat_desejada,
       resultado: info.resultado,
-      id_metodo: info.id_metodo
+      id_metodo: info.id_metodo,
+      consultor: info.consultor,
+      propriedade: info.propriedade,
+      area: info.area,
+      mg_desejada: info.mg_desejada,
+      ca_desejada: info.ca_desejada,
     }
-    console.log(payload)
-    const resp = await calimingAPI.gerarExcel(payload)
 
-    if (resp.ok) {
-      console.log('Excel gerado com sucesso')
-    }
+    await calimingAPI.gerarExcel(payload)
+    console.log('Excel gerado com sucesso')
+
   } catch (err) {
     console.error('Erro ao gerar excel no componente: ', err)
   }
@@ -46,35 +62,61 @@ const formatarData = (dataString: string) => {
   const data = new Date(dataString)
   return format(data, 'dd/MM/yyyy')
 }
+
+const paginaAnterior = () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    buscarCalculos()
+  }
+}
+
+const proximaPagina = () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+    buscarCalculos()
+  }
+}
+
 onMounted(() => {
   buscarCalculos()
 })
 </script>
 
 <template>
-    <div class="checkbox-molecule">
-        <div class="info" v-for="(info, index) in infos.slice().reverse()" :key="index">
-          <CheckBoxAtom class="check" @exportar="makeExcel(info)">
-            <p>Data: {{ formatarData(info.data_calculo) }} </p>
-            <p>Método: {{ info.id_metodo }} </p>
-            <p>Necessidade de calagem: {{ info.resultado }} </p>
-         </CheckBoxAtom>
-        </div>
+  <div class="checkbox-molecule">
+    <div class="info" v-for="(info, index) in infos" :key="index">
+      <CheckBoxAtom class="check" @exportar="makeExcel(info)">
+        <p>Data: {{ formatarData(info.data_calculo) }}</p>
+        <p>Método: {{ metodoLabels[info.id_metodo] }}</p>
+        <p>Necessidade de calagem: {{ info.resultado }}</p>
+      </CheckBoxAtom>
     </div>
+
+    <div class="pagination" v-if="infos.length > 0">
+      <button @click="paginaAnterior" :disabled="currentPage === 1"> < Anterior</button>
+      <span>Página {{ currentPage }} de {{ totalPages }}</span>
+      <button @click="proximaPagina" :disabled="currentPage === totalPages">Próxima ></button>
+    </div>
+
+    <div class="pagination" v-else-if="infos.length === 0">
+      <p>Parece que ainda não há cálculos a serem exibidos...</p>
+    </div>
+  </div>
 </template>
 
 
-<style scoped>
 
-.checkbox-molecule{
-    width: 100%;
-    justify-content: center;
-    flex-direction: column;
-    margin: 0 16.5em;
+
+<style scoped>
+.checkbox-molecule {
+  width: 100%;
+  justify-content: center;
+  flex-direction: column;
+  margin: 0 16.5em;
 }
 
-p{
-    color: #185C37;
+p {
+  color: #185C37;
 }
 
 @media screen and (max-width: 1280px) {
@@ -83,6 +125,30 @@ p{
   }
 }
 
+.pagination {
+  font-family: 'Konkhmer Sleokchher';
+  font-size: 0.9em;
+}
+
+.pagination button {
+  color: #ffffff;
+  background-color: #617e4a;
+  border: solid 1px transparent;
+  transition: .3s ;
+  margin: 0.3em;
+}
+
+.pagination button:hover {
+  background-color: #8db36b;
+  transform: .3s;
+}
+
+.pagination p {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 1.1em;
+  color: #c5c2c2;
+}
 
 @media screen and (max-width: 769px) {
   .checkbox-molecule {
@@ -92,7 +158,11 @@ p{
   .check {
     font-size: 0.7em;
 
-  } 
+  }
+
+  .pagination {
+    font-size: 0.7em;
+  }
 }
 
 @media screen and (max-width: 540px) {
@@ -100,10 +170,10 @@ p{
     margin: 0 3.6em;
   }
 
-  .check {
-    font-size: 0.7em;
 
-  } 
+  .pagination {
+    font-size: 0.4em;
+  }
 }
 
 
@@ -115,9 +185,6 @@ p{
   .check {
     font-size: 0.7em;
 
-  } 
+  }
 }
 </style>
-
-
-

@@ -16,7 +16,7 @@ const router = useRouter()
 
 const handleCadastro = async () => {
     if (senha.value !== confirmarSenha.value) {
-        erro.value = "As senhas não coincidem."
+        alert("As senhas não coincidem.")
         return 
     }
 
@@ -61,7 +61,6 @@ const handleCadastro = async () => {
         </div>
    
     </div>  
-    <div v-if="erro" class="erro-msg"> {{  erro }}</div>
     <div class="button-cadastrar">
         <ButtonGreenAtom text="Cadastrar" @click="handleCadastro"/>
     </div>  

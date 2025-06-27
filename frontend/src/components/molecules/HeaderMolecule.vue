@@ -24,7 +24,7 @@ import HeaderTextAtom from '../atoms/HeaderTextAtom.vue';
   align-items: center;
   width: 100%;
   margin:0rem 1rem;
-  padding: 1rem;
+  padding: 0 1rem;
   box-sizing: border-box;
 }
 

@@ -21,7 +21,7 @@ const handleLogin = async () => {
         if (success) {
             router.push('/calculator')
         } else {
-            erro.value = 'Email ou senha inválidos'
+            alert("Email ou senha inválidos")
         }
     } catch (err) {
         erro.value = 'Erro inesperado: ' + (err instanceof Error ? err.message : String(err))
@@ -47,7 +47,6 @@ const handleLogin = async () => {
                 <InputAtom class="senha" placeholder="Senha" v-model="senha" type="password" />
             </div>
         </div>
-        <div v-if="erro"> {{ erro }}</div>
         <div class="button-entrar">
             <ButtonGreenAtom text="Entrar" @click="handleLogin" />
         </div>

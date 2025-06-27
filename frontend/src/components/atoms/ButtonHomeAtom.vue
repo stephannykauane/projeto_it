@@ -66,4 +66,11 @@ export default {
   }
 }
 
+@media screen and (max-width: 400px) {
+  .home-button {
+    font-size: 0.8em; 
+    padding: 0.2em 2.2em; 
+    min-width: 90px;
+  }
+}
 </style>
