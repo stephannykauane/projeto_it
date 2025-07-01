@@ -3,6 +3,7 @@ import calimingAPI from '../../services/CalimingAPIClient';
 import CheckBoxAtom from '../atoms/CheckBoxAtom.vue';
 import { ref, onMounted } from 'vue'
 import { format } from 'date-fns'
+import dataService from '../../services/dataService';
 
 const infos = ref<Array<any>>([])
 const currentPage = ref(1)
@@ -18,7 +19,7 @@ const metodoLabels: Record<number, string> = {
 
 const buscarCalculos = async () => {
   try {
-    const res = await calimingAPI.getListaCalculos(currentPage.value, limit)
+    const res = await dataService.getListaCalculos(currentPage.value, limit)
     infos.value = res.dados
     totalPages.value = res.totalPages
   } catch (err) {
@@ -50,7 +51,7 @@ const makeExcel = async (info: any) => {
       ca_desejada: info.ca_desejada,
     }
 
-    await calimingAPI.gerarExcel(payload)
+    await dataService.gerarExcel(payload)
     console.log('Excel gerado com sucesso')
 
   } catch (err) {

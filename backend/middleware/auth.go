@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"os"
 	"strings"
-
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/stephannykauane/projeto_it/backend/types"
 )

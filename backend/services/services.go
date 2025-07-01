@@ -11,7 +11,6 @@ import (
 	"os"
 	"path/filepath"
 	"time"
-
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/stephannykauane/projeto_it/backend/calculator"
 	datab "github.com/stephannykauane/projeto_it/backend/db"
@@ -43,7 +42,7 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 
 	basePath := os.Getenv("TEMPLATE_DIR")
 	if basePath == "" {
-		basePath = "./cmd" 
+		basePath = "./assets" 
 	}
 
 	templateFile := ""

@@ -4,7 +4,7 @@ import ButtonGreenAtom from '../atoms/ButtonGreenAtom.vue';
 import InputAtom from '../atoms/InputAtom.vue';
 import TextAtom from '../atoms/TextAtom.vue';
 import { ref } from 'vue'
-import calimingAPI from '../../services/CalimingAPIClient';
+import authService from '../../services/authService';
 
 
 const email = ref('')
@@ -14,7 +14,7 @@ const router = useRouter()
 
 const handleLogin = async () => {
     try {
-        const success = await calimingAPI.login({
+        const success = await authService.login({
             email: email.value,
             senha: senha.value
         })

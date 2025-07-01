@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import calimingAPI from '../../services/CalimingAPIClient';
+import authService from '../../services/authService';
 import ButtonSairAtom from '../atoms/ButtonSairAtom.vue';
 import HeaderTextAtom from '../atoms/HeaderTextAtom.vue';
 import SeparatorAtom from '../atoms/SeparatorAtom.vue';
@@ -9,7 +9,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 const handleLogout = () => {
-    calimingAPI.logout()
+    authService.logout()
     router.push('/home')
 }
 

@@ -6,7 +6,7 @@ import SignUpMolecule from '../molecules/SignUpMolecule.vue';
 <template>
 <div class="container-signup-form">
     <div class="signup-form">
-        <SignUpMolecule></SignUpMolecule>
+        <SignUpMolecule/>
     </div>
 </div>   
 

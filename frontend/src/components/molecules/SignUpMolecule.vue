@@ -4,7 +4,7 @@ import InputAtom from '../atoms/InputAtom.vue';
 import TextAtom from '../atoms/TextAtom.vue';
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import calimingAPI from '/home/stephanny/projeto_it/frontend/src/services/CalimingAPIClient.js'
+import authService from '../../services/authService';
 
 const email = ref('')
 const senha = ref ('')
@@ -21,7 +21,7 @@ const handleCadastro = async () => {
     }
 
     try {
-        await calimingAPI.signUp({
+        await authService.signUp({
             email: email.value,
             senha: senha.value,
             nome: nome.value

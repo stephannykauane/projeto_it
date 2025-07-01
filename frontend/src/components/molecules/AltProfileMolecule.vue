@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue';
 import ButtonAlterarAtom from '../atoms/ButtonAlterarAtom.vue';
 import TextAtom from '../atoms/TextAtom.vue';
-import calimingAPI from '../../services/CalimingAPIClient';
+import dataService from '../../services/dataService';
 
 
 const editandoNome = ref(false);
@@ -19,7 +19,7 @@ const alternarEdicaoSenha = () => { editandoSenha.value = !editandoSenha.value; 
 
 const buscarDados = async () => {
   try {
-     const usuario = await calimingAPI.getDados()
+     const usuario = await dataService.getDados()
      
      emailEmail.value = usuario.email
      nomeNome.value = usuario.nome
@@ -30,7 +30,7 @@ const buscarDados = async () => {
 
 const Alterar = async () => {
   try {
-    await calimingAPI.AlterarDadosUsuario({
+    await dataService.alterarDadosUsuario({
       nome: novoNome.value,
       senha: novaSenha.value
     })

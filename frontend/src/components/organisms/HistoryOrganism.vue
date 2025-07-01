@@ -1,6 +1,4 @@
 <script setup lang="ts">
-
-
 import HeaderAndNavMolecule from '../molecules/HeaderAndNavMolecule.vue';
 import CheckBoxMolecule from '../molecules/CheckBoxMolecule.vue';
 

@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted } from 'vue';
 import AltProfileMolecule from '../molecules/AltProfileMolecule.vue';
-import HeaderPrincipalMolecule from '../molecules/HeaderPrincipalMolecule.vue';
-import NavMenuMolecule from '../molecules/NavMenuMolecule.vue';
 import HeaderAndNavMolecule from '../molecules/HeaderAndNavMolecule.vue';
 
 onMounted(() => {

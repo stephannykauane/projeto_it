@@ -3,23 +3,54 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"os"
+	"strconv"
 
-	_ "github.com/lib/pq" 
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "calagem"
-	password = "admin"
-	dbname   = "calagem"
-	jwtKey   = "secretkey"
+var (
+	host     string
+	port     int
+	user     string
+	password string
+	dbname   string
 )
+
+func getEnv(key, fallback string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		return fallback
+	}
+	return val
+}
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("Aviso: erro ao carregar o arquivo .env. funcionando com os default values.")
+	}
+
+	host = getEnv("DB_HOST", "localhost")
+	user = getEnv("DB_USER", "calagem")
+	password = getEnv("DB_PASSWORD", "admin")
+	dbname = getEnv("DB_NAME", "calagem")
+
+	portStr := getEnv("DB_PORT", "5432")
+	port, err = strconv.Atoi(portStr)
+	if err != nil {
+		log.Fatalf("Erro ao converter DB_PORT: %v", err)
+	}
+}
+
 
 func ConnectDB() *sql.DB {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
 
+	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
@@ -27,18 +58,13 @@ func ConnectDB() *sql.DB {
 }
 
 func Database() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-	db, err := sql.Open("postgres", psqlInfo)
+	db := ConnectDB()
+	defer db.Close()
 
+	err := db.Ping()
 	if err != nil {
+		fmt.Println("Erro ao conectar com o banco de dados.")
 		panic(err)
 	}
-
-	err = db.Ping()
-	if err != nil {
-		fmt.Println("Cannot ping the database")
-		panic(err)
-	}
-	db.Close()
-	fmt.Println("Successfully connected with database!")
+	fmt.Println("Conexão com o banco de dados realizada com sucesso!")
 }

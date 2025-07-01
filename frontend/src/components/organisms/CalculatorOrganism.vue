@@ -11,9 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
 import HeaderAndNavMolecule from '../molecules/HeaderAndNavMolecule.vue';
-import AccordionAtom from '../atoms/AccordionAtom.vue';
 import CalculatorMethodMolecule from '../molecules/CalculatorMethodMolecule.vue';
 
 </script>

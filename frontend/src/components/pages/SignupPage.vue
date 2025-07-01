@@ -4,5 +4,5 @@ import SignupOrganism from '../organisms/SignupOrganism.vue';
 </script>
 
 <template>
-    <SignupOrganism></SignupOrganism>
+    <SignupOrganism/>
 </template>

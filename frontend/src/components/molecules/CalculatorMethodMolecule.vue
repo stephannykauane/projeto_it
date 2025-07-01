@@ -197,6 +197,7 @@ import TextDisplayMolecule from '../molecules/TextDisplayMolecule.vue'
 import ButtonAlterarAtom from '../atoms/ButtonAlterarAtom.vue'
 import ButtonExportarAtom from '../atoms/ButtonExportarAtom.vue'
 import calimingAPI from '../../services/CalimingAPIClient'
+import dataService from '../../services/dataService'
 
 const step = ref(1)
 const consultor = ref('')
@@ -313,7 +314,7 @@ async function sendAnaliseAndNext() {
 
 const sendAnalise = async () => {
   try {
-    const resultado = await calimingAPI.gerarCalculo({
+    const resultado = await dataService.gerarCalculo({
       consultor: consultor.value,
       propriedade: propriedade.value,
       area: area.value,
@@ -371,7 +372,7 @@ const exportarParaExcel = async () => {
       resultado: calculo.value.resultado ?? 0
     }
 
-    await calimingAPI.gerarExcel(payload)
+    await dataService.gerarExcel(payload)
 
   } catch (err: any) {
     console.error("Erro ao exportar Excel:", err)
