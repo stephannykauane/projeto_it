@@ -20,7 +20,7 @@ export default {
   },
 
   async logout() {
-    await apiClient.sendRequest({
+    await calimingAPI.sendRequest({
       method: 'POST',
       path: '/logout',
     });

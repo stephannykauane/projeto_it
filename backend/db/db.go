@@ -28,9 +28,11 @@ func getEnv(key, fallback string) string {
 }
 
 func init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("Aviso: erro ao carregar o arquivo .env. funcionando com os default values.")
+	
+	if os.Getenv("GO_ENV") != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Println("Aviso: erro ao carregar o arquivo .env. funcionando com os default values.")
+		}
 	}
 
 	host = getEnv("DB_HOST", "localhost")
@@ -39,6 +41,7 @@ func init() {
 	dbname = getEnv("DB_NAME", "calagem")
 
 	portStr := getEnv("DB_PORT", "5432")
+	var err error
 	port, err = strconv.Atoi(portStr)
 	if err != nil {
 		log.Fatalf("Erro ao converter DB_PORT: %v", err)

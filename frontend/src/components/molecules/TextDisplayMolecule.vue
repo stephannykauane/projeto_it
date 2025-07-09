@@ -1,7 +1,13 @@
 <script setup lang="ts">
 defineProps({
-  label: String,    
-  value: Number     
+  value: {
+    type: [Number, String],
+    required: true
+  },
+  label: {
+    type: String,
+    required: true
+  }
 });
 </script>
 

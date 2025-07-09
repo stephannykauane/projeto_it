@@ -4,8 +4,9 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/stephannykauane/projeto_it/backend/types"
 	"math"
+
+	"github.com/stephannykauane/projeto_it/backend/types"
 )
 
 type ResultadoCalculo struct {
@@ -17,8 +18,7 @@ func CalculoSatBases(a types.SatBases) (sql.NullFloat64, sql.NullFloat64) {
 
 	NC := ((a.SatD - a.SatA) * a.Ctc) / float64(a.Prnt)
 
-	ResultValor := math.Round(NC*100)/100
-
+	ResultValor := math.Round(NC*1000) / 1000
 
 	var Result, SatAtual sql.NullFloat64
 
@@ -36,35 +36,37 @@ func CalculoSatBases(a types.SatBases) (sql.NullFloat64, sql.NullFloat64) {
 		Result.Valid = true
 	}
 
-
-
 	return Result, SatAtual
 
 }
 
 func CalculoAluminio(b types.Aluminio) sql.NullFloat64 {
-	var NC float64
 
-	if b.Ctc > 4.0 && b.Argila > 15 && (b.Calcio+b.Magnesio) < 2.0 {
+    fmt.Println("valores recebidos: ", b.Aluminio)
+	fmt.Println("valores recebidos: ", b.Calcio)
+	fmt.Println("valores recebidos: ", b.Magnesio)
+	fatorCorrecao := 100 / b.Prnt
 
-		NC = ((2 * b.Aluminio) + 2 - (b.Calcio + b.Magnesio)) * float64(b.Prnt)
 
-	} else {
-		NC = (2 * b.Aluminio) * float64(b.Prnt)
+	nc1 := (2 * b.Aluminio) * float64(fatorCorrecao)
+	nc2 := 2 - (b.Calcio+b.Magnesio)*float64(fatorCorrecao)
 
+	maiorValor := nc1
+	if nc2 > nc1 {
+		maiorValor = nc2
 	}
-	ResultValor := math.Round(NC*100) / 100
 
-	var Result sql.NullFloat64
+	resultValor := math.Round(maiorValor*1000) / 1000 
 
-	if math.IsNaN(ResultValor) {
-		Result.Valid = false
+	var result sql.NullFloat64
+	if math.IsNaN(resultValor) {
+		result.Valid = false
 	} else {
-		Result.Float64 = ResultValor
-		Result.Valid = true
+		result.Float64 = resultValor
+		result.Valid = true
 	}
-   
-	return Result
+
+	return result
 }
 
 func CalculoSatGeneric(
@@ -75,24 +77,34 @@ func CalculoSatGeneric(
 	kgBase float64,
 	oxido float64,
 	prnt float64,
+
 ) sql.NullFloat64 {
 
 	cmolNecessario := (ctc * (desejado / 100)) - teor
 	kgElemento := kgBase * cmolNecessario
 	kgCorretivo := kgElemento * conversao
 	xDoKgCorretivo := RegraDeTres(oxido, 100, kgCorretivo)
-	resultado := math.Round(RegraDeTres(prnt, xDoKgCorretivo, 100)*100) / 100
+
+	resultadoKg := RegraDeTres(prnt, xDoKgCorretivo, 100)
+	resultadoTon := resultadoKg / 1000
+
+	resultado := math.Round(resultadoTon*1000) / 1000
 
 	var result sql.NullFloat64
-
 	if math.IsNaN(resultado) {
 		result.Valid = false
 	} else {
 		result.Float64 = resultado
 		result.Valid = true
 	}
+	fmt.Println("cmolNecessario:", cmolNecessario)
+	fmt.Println("kgElemento:", kgElemento)
+	fmt.Println("kgCorretivo:", kgCorretivo)
+	fmt.Println("xDoKgCorretivo:", xDoKgCorretivo)
+	fmt.Println("resultadoTon (final em toneladas):", resultadoTon)
 
 	return result
+
 }
 
 func CalculoSatCalcio(c types.SatCalcio) sql.NullFloat64 {
@@ -138,19 +150,23 @@ func Calculando(jsonData []byte, MetodoID int) (ResultadoCalculo, error) {
 			return resultado, fmt.Errorf("erro ao decodificar JSON para SatBases: %v", err)
 		}
 
+
 		resultado.Result, resultado.SatAtual = CalculoSatBases(satbases)
 
 	case 2:
-		var aluminio types.Aluminio
-		err = json.Unmarshal(jsonData, &aluminio)
+	
+		var Magnesio types.SatMagnesio
+		err = json.Unmarshal(jsonData, &Magnesio)
 
 		if err != nil {
 
-			return resultado, fmt.Errorf("erro ao decodificar JSON para Aluminio: %v", err)
+			return resultado, fmt.Errorf("erro ao decodificar JSON para Magnesio: %v", err)
 		}
 
-		resultado.Result = CalculoAluminio(aluminio)
+		resultado.Result = CalculoSatMagnesio(Magnesio)
 	case 3:
+
+	
 		var Calcio types.SatCalcio
 		err = json.Unmarshal(jsonData, &Calcio)
 
@@ -162,20 +178,21 @@ func Calculando(jsonData []byte, MetodoID int) (ResultadoCalculo, error) {
 		resultado.Result = CalculoSatCalcio(Calcio)
 
 	case 4:
-		var Magnesio types.SatMagnesio
-		err = json.Unmarshal(jsonData, &Magnesio)
+		var aluminio types.Aluminio
+		err = json.Unmarshal(jsonData, &aluminio)
 
 		if err != nil {
 
-			return resultado, fmt.Errorf("erro ao decodificar JSON para Magnesio: %v", err)
+			return resultado, fmt.Errorf("erro ao decodificar JSON para Aluminio: %v", err)
 		}
 
-		resultado.Result = CalculoSatMagnesio(Magnesio)
+		resultado.Result = CalculoAluminio(aluminio)
 
 	default:
 
 		return resultado, fmt.Errorf("metodoID desconhecido")
 	}
+	fmt.Println(">>> Resultado final enviado:", resultado.Result.Float64)
 
 	return resultado, nil
 

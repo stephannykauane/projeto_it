@@ -51,8 +51,8 @@
             <div class="analiseInformations">
               <div class="child" v-if="selectedMethod?.key === 'saturacaoBases'">
                 <div class="children">
-                  <TextInputMolecule text="CTC (cmolc/dm³):" v-model="ctc" />
-                  <TextInputMolecule text="Saturação desejada (%V):" v-model="sat_desejada" />
+                  <TextInputMolecule text="CTC (cmol dm⁻³):" v-model="ctc" />
+                  <TextInputMolecule text="Saturação desejada (V%):" v-model="sat_desejada" />
                 </div>
                 <div class="children">
                   <TextInputMolecule text="Saturação Atual (V%):" v-model="sat_atual" />
@@ -60,23 +60,10 @@
                 </div>
               </div>
 
-              <div class="child" v-else-if="selectedMethod?.key === 'aluminioTrocavel'">
-                <div class="children">
-                  <TextInputMolecule text="CTC (cmolc/dm³):" v-model="ctc" />
-                  <TextInputMolecule text="Argila (%):" v-model="argila" />
-                  <TextInputMolecule text="Cálcio (cmolc/dm³):" v-model="calcio" />
-                </div>
-                <div class="children">
-                  <TextInputMolecule text="Magnésio (cmolc/dm³):" v-model="magnesio" />
-                  <TextInputMolecule text="Alumínio (cmolc/dm³):" v-model="aluminio" />
-                  <TextInputMolecule text="PRNT do corretivo (%):" v-model="prnt" />
-                </div>
-              </div>
-
               <div class="child" v-else-if="selectedMethod?.key === 'saturacaoCalcio'">
                 <div class="children">
-                  <TextInputMolecule text="CTC (cmolc/dm³):" v-model="ctc" />
-                  <TextInputMolecule text="Teor de Ca da análise (cmolc/dm³): " v-model="teor_ca" />
+                  <TextInputMolecule text="CTC (cmol dm⁻³):" v-model="ctc" />
+                  <TextInputMolecule text="Teor de Ca da análise (cmol dm⁻³): " v-model="teor_ca" />
                 </div>
                 <div class="children">
                   <TextInputMolecule text="PRNT do corretivo (%):" v-model="prnt" />
@@ -87,14 +74,36 @@
 
               <div class="child" v-else-if="selectedMethod?.key === 'saturacaoMagnesio'">
                 <div class="children">
-                  <TextInputMolecule text="CTC (cmolc/dm³):" v-model="ctc" />
-                  <TextInputMolecule text="Teor de Mg da análise (cmolc/dm³): " v-model="teor_mg" />
+                  <TextInputMolecule text="CTC (cmol dm⁻³):" v-model="ctc" />
+                  <TextInputMolecule text="Teor de Mg da análise (cmol dm⁻³): " v-model="teor_mg" />
                 </div>
                 <div class="children">
                   <TextInputMolecule text="PRNT do corretivo (%):" v-model="prnt" />
                   <TextInputMolecule text="MgO do corretivo (%):" v-model="mgO" />
                   <TextInputMolecule text="Porcentagem de Mg desejada (%):" v-model="mg_desejada" />
                 </div>
+              </div>
+
+              <div class="child" v-else-if="selectedMethod?.key === 'aluminioTrocavel'">
+                <div class="children">
+                  <TextInputMolecule text="CTC (cmol dm⁻³):" v-model="ctc" />
+                  <TextInputMolecule text="Cálcio (cmol dm⁻³):" v-model="calcio" />
+                </div>
+                <div class="children">
+                  <TextInputMolecule text="Magnésio (cmol dm⁻³):" v-model="magnesio" />
+                  <TextInputMolecule text="Alumínio (cmol dm⁻³):" v-model="aluminio" />
+                  <TextInputMolecule text="PRNT do corretivo (%):" v-model="prnt" />
+                </div>
+                <div class="tooltip-aluminio">
+                  <div class="tooltip-icon">
+                    <img src="../../../src/assets/info-icon.svg">
+                    <div>
+                      <span class="tooltiptext">Método sugerido exclusivamente para solos com menos de 15% de
+                        argila</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
           </form>
@@ -107,40 +116,41 @@
             <div class="resultInformations">
               <h2>Dados da Análise</h2>
               <div class="analiseData" v-if="selectedMethod?.key === 'saturacaoBases'">
-                <TextDisplayMolecule label="CTC (cmolc/dm³):" :value="calculo?.ctc" />
-                <TextDisplayMolecule label="Saturação desejada (%V):" :value="calculo?.sat_desejada" />
-                <TextDisplayMolecule label="Saturação Atual (V%):" :value="calculo?.sat_atual" />
-                <TextDisplayMolecule label="PRNT do corretivo (%):" :value="calculo?.prnt" />
-              </div>
-
-              <div class="analiseData" v-if="selectedMethod?.key === 'aluminioTrocavel'">
-                <TextDisplayMolecule label="CTC (cmolc/dm³):" :value="calculo?.ctc" />
-                <TextDisplayMolecule label="Argila: " :value="calculo?.argila" />
-                <TextDisplayMolecule label="Cálcio:" :value="calculo?.calcio" />
-                <TextDisplayMolecule label="Magnésio:" :value="calculo?.magnesio" />
-                <TextDisplayMolecule label="Alumínio:" :value="calculo?.aluminio" />
-                <TextDisplayMolecule label="PRNT do corretivo (%):" :value="calculo?.prnt" />
+                <TextDisplayMolecule label="CTC (cmol dm⁻³):" :value="formatarDecimalBR(calculo?.ctc)" />
+                <TextDisplayMolecule label="Saturação desejada (V%):" :value="formatarDecimalBR(calculo?.sat_desejada)" />
+                <TextDisplayMolecule label="Saturação Atual (V%):" :value="formatarDecimalBR(calculo?.sat_atual)" />
+                <TextDisplayMolecule label="PRNT do corretivo (%):" :value="formatarDecimalBR(calculo?.prnt)" />
               </div>
 
               <div class="analiseData" v-if="selectedMethod?.key === 'saturacaoCalcio'">
-                <TextDisplayMolecule label="CTC (cmolc/dm³):" :value="calculo?.ctc" />
-                <TextDisplayMolecule label="Teor de Ca da análise (cmolc/dm³): " :value="calculo?.teor_ca" />
-                <TextDisplayMolecule label="PRNT do corretivo (%):" :value="calculo?.prnt" />
-                <TextDisplayMolecule label="CaO do corretivo (%):" :value="calculo?.caO" />
-                <TextDisplayMolecule label="Porcentagem de Ca desejada (%):" :value="calculo?.ca_desejada" />
+                <TextDisplayMolecule label="CTC (cmol dm⁻³):" :value="formatarDecimalBR(calculo?.ctc)" />
+                <TextDisplayMolecule label="Teor de Ca da análise (cmol dm⁻³): " :value="formatarDecimalBR(calculo?.teor_ca)" />
+                <TextDisplayMolecule label="PRNT do corretivo (%):" :value="formatarDecimalBR(calculo?.prnt)" />
+                <TextDisplayMolecule label="CaO do corretivo (%):" :value="formatarDecimalBR(calculo?.caO)" />
+                <TextDisplayMolecule label="Porcentagem de Ca desejada (%):" :value="formatarDecimalBR(calculo?.ca_desejada)" />
               </div>
 
               <div class="analiseData" v-if="selectedMethod?.key === 'saturacaoMagnesio'">
-                <TextDisplayMolecule label="CTC (cmolc/dm³):" :value="calculo?.ctc" />
-                <TextDisplayMolecule label="Teor de Mg da análise (cmolc/dm³): " :value="calculo?.teor_mg" />
-                <TextDisplayMolecule label="PRNT do corretivo (%):" :value="calculo?.prnt" />
-                <TextDisplayMolecule label="MgO do corretivo (%):" :value="calculo?.mgO" />
-                <TextDisplayMolecule label="Porcentagem de Mg desejada (%):" :value="calculo?.mg_desejada" />
+                <TextDisplayMolecule label="CTC (cmol dm⁻³):" :value="formatarDecimalBR(calculo?.ctc)" />
+                <TextDisplayMolecule label="Teor de Mg da análise (cmol dm⁻³): " :value="formatarDecimalBR(calculo?.teor_mg)" />
+                <TextDisplayMolecule label="PRNT do corretivo (%):" :value="formatarDecimalBR(calculo?.prnt)" />
+                <TextDisplayMolecule label="MgO do corretivo (%):" :value="formatarDecimalBR(calculo?.mgO)" />
+                <TextDisplayMolecule label="Porcentagem de Mg desejada (%):" :value="formatarDecimalBR(calculo?.mg_desejada)" />
+              </div>
+
+
+              <div class="analiseData" v-if="selectedMethod?.key === 'aluminioTrocavel'">
+                <TextDisplayMolecule label="CTC (cmolc/dm³):" :value="formatarDecimalBR(calculo?.ctc)" />
+                <TextDisplayMolecule label="Cálcio (cmol dm⁻³):" :value="formatarDecimalBR(calculo?.calcio)" />
+                <TextDisplayMolecule label="Magnésio (cmol dm⁻³):" :value="formatarDecimalBR(calculo?.magnesio)" />
+                <TextDisplayMolecule label="Alumínio (cmol dm⁻³):" :value="formatarDecimalBR(calculo?.aluminio)" />
+                <TextDisplayMolecule label="PRNT do corretivo (%):" :value="formatarDecimalBR(calculo?.prnt)" />
               </div>
 
               <div class="resultadoCalagem">
                 <h2>Resultado</h2>
-                <TextDisplayMolecule label="Necessidade de Calagem (ton/ha):" :value="calculo?.resultado" />
+                <TextDisplayMolecule label="Necessidade de Calagem (ton ha⁻¹):"
+                  :value="formatarDecimalBR(calculo?.resultado)" />
               </div>
             </div>
           </form>
@@ -159,12 +169,31 @@
         </div>
       </div>
 
-      <div v-else-if="step === 2 || step === 3">
+      <div v-else-if="step === 2">
         <div class="next-and-back">
-          <div class="cta">
-            <ButtonAlterarAtom text="< Voltar" @click="back" />
+          <div class="cta-step2">
+            <div>
+              <ButtonAlterarAtom text="< Voltar" @click="back" />
+            </div>
+            <div class="tooltip-icon">
+              <img src="../../../src/assets/info-icon.svg">
+              <div>
+                <span class="tooltiptext">Os cálculos sugeridos têm por base informações publicadas por Sousa e Lobato
+                  (2004), no livro "Cerrado: Correção do Solo e Adubação"</span>
+              </div>
+            </div>
           </div>
-          <div class="cta" v-if="step === 3">
+        </div>
+      </div>
+
+      <div v-else-if="step === 3">
+        <div class="next-and-back">
+          <div class="cta-step2">
+            <div>
+              <ButtonAlterarAtom text="< Voltar" @click="back" />
+            </div>
+          </div>
+          <div class="cta">
             <ButtonAlterarAtom text="Avançar >" @click="sendAnaliseAndNext" />
           </div>
         </div>
@@ -196,7 +225,6 @@ import TextInputMolecule from '../molecules/TextInputMolecule.vue'
 import TextDisplayMolecule from '../molecules/TextDisplayMolecule.vue'
 import ButtonAlterarAtom from '../atoms/ButtonAlterarAtom.vue'
 import ButtonExportarAtom from '../atoms/ButtonExportarAtom.vue'
-import calimingAPI from '../../services/CalimingAPIClient'
 import dataService from '../../services/dataService'
 
 const step = ref(1)
@@ -210,7 +238,6 @@ const sat_desejada = ref('')
 const calcio = ref('')
 const magnesio = ref('')
 const aluminio = ref('')
-const argila = ref('')
 const caO = ref('')
 const ca_desejada = ref('')
 const mgO = ref('')
@@ -223,14 +250,14 @@ const calculo = ref<any>(null)
 
 const metodos = [
   { id: 1, key: 'saturacaoBases', label: 'Saturação por Bases' },
-  { id: 2, key: 'aluminioTrocavel', label: 'Alumínio Trocável' },
-  { id: 3, key: 'saturacaoCalcio', label: 'Saturação de Cálcio' },
-  { id: 4, key: 'saturacaoMagnesio', label: 'Saturação de Magnésio' }
+  { id: 2, key: 'saturacaoMagnesio', label: 'Saturação de Magnésio na CTC' },
+  { id: 3, key: 'saturacaoCalcio', label: 'Saturação de Cálcio na CTC' },
+  { id: 4, key: 'aluminioTrocavel', label: 'Alumínio Trocável' }
 ]
 
 const selectedMethod = ref<{
   id: number
-  key: 'saturacaoBases' | 'aluminioTrocavel' | 'saturacaoCalcio' | 'saturacaoMagnesio'
+  key: 'saturacaoBases' | 'saturacaoCalcio' | 'saturacaoMagnesio' | 'aluminioTrocavel'
   label: string
 } | null>(null)
 
@@ -245,6 +272,16 @@ function next() {
 
   step.value++
 }
+
+function formatarDecimalBR(valor: number | string): string {
+  if (valor === null || valor === undefined || isNaN(Number(valor))) return '-'
+  return valor.toString().replace('.', ',')
+}
+
+function parseValorNumerico(valor: string): number {
+  return parseFloat(valor.replace(',', '.'))
+}
+
 
 function back() {
   if (step.value > 1) step.value--
@@ -262,7 +299,6 @@ function reiniciar() {
   calcio.value = ""
   magnesio.value = ""
   aluminio.value = ""
-  argila.value = ""
   caO.value = ""
   ca_desejada.value = ""
   mgO.value = ""
@@ -273,7 +309,6 @@ function reiniciar() {
 }
 
 function changeMethod(method: typeof metodos[number]) {
-
   selectedMethod.value = method
   step.value++
 }
@@ -294,7 +329,7 @@ async function sendAnaliseAndNext() {
   if (metodo === 'saturacaoBases') {
     camposObrigatorios = [...camposComuns, sat_desejada.value, sat_atual.value]
   } else if (metodo === 'aluminioTrocavel') {
-    camposObrigatorios = [...camposComuns, argila.value, calcio.value, magnesio.value, aluminio.value]
+    camposObrigatorios = [...camposComuns, calcio.value, magnesio.value, aluminio.value]
   } else if (metodo === 'saturacaoCalcio') {
     camposObrigatorios = [...camposComuns, teor_ca.value, caO.value, ca_desejada.value]
   } else if (metodo === 'saturacaoMagnesio') {
@@ -318,20 +353,19 @@ const sendAnalise = async () => {
       consultor: consultor.value,
       propriedade: propriedade.value,
       area: area.value,
-      ctc: parseFloat(ctc.value),
+      ctc: parseValorNumerico(ctc.value),
       prnt: parseInt(prnt.value),
-      sat_desejada: parseFloat(sat_desejada.value),
-      sat_atual: parseFloat(sat_atual.value),
-      argila: parseInt(argila.value),
-      calcio: parseFloat(calcio.value),
-      aluminio: parseFloat(aluminio.value),
-      magnesio: parseFloat(magnesio.value),
-      caO: parseFloat(caO.value),
-      ca_desejada: parseFloat(ca_desejada.value),
-      mgO: parseFloat(mgO.value),
-      mg_desejada: parseFloat(mg_desejada.value),
-      teor_ca: parseFloat(teor_ca.value),
-      teor_mg: parseFloat(teor_mg.value),
+      sat_desejada: parseValorNumerico(sat_desejada.value),
+      sat_atual: parseValorNumerico(sat_atual.value),
+      calcio: parseValorNumerico(calcio.value),
+      aluminio: parseValorNumerico(aluminio.value),
+      magnesio: parseValorNumerico(magnesio.value),
+      caO: parseValorNumerico(caO.value),
+      ca_desejada: parseValorNumerico(ca_desejada.value),
+      mgO: parseValorNumerico(mgO.value),
+      mg_desejada: parseValorNumerico(mg_desejada.value),
+      teor_ca: parseValorNumerico(teor_ca.value),
+      teor_mg: parseValorNumerico(teor_mg.value),
       id_metodo: selectedMethod.value?.id ?? 0
 
     })
@@ -354,20 +388,19 @@ const exportarParaExcel = async () => {
       consultor: consultor.value,
       propriedade: propriedade.value,
       area: area.value,
-      ctc: parseFloat(ctc.value) || 0,
+      ctc: parseValorNumerico(ctc.value) || 0,
       prnt: parseInt(prnt.value) || 0,
-      sat_desejada: parseFloat(sat_desejada.value) || 0,
-      sat_atual: parseFloat(sat_atual.value) || 0,
-      argila: parseInt(argila.value) || 0,
-      calcio: parseFloat(calcio.value) || 0,
-      aluminio: parseFloat(aluminio.value) || 0,
-      magnesio: parseFloat(magnesio.value) || 0,
-      caO: parseFloat(caO.value) || 0,
-      mgO: parseFloat(mgO.value) || 0,
-      teor_ca: parseFloat(teor_ca.value) || 0,
-      teor_mg: parseFloat(teor_mg.value) || 0,
-      ca_desejada: parseFloat(ca_desejada.value) || 0,
-      mg_desejada: parseFloat(mg_desejada.value) || 0,
+      sat_desejada: parseValorNumerico(sat_desejada.value) || 0,
+      sat_atual: parseValorNumerico(sat_atual.value) || 0,
+      calcio: parseValorNumerico(calcio.value) || 0,
+      aluminio: parseValorNumerico(aluminio.value) || 0,
+      magnesio: parseValorNumerico(magnesio.value) || 0,
+      caO: parseValorNumerico(caO.value) || 0,
+      mgO: parseValorNumerico(mgO.value) || 0,
+      teor_ca: parseValorNumerico(teor_ca.value) || 0,
+      teor_mg: parseValorNumerico(teor_mg.value) || 0,
+      ca_desejada: parseValorNumerico(ca_desejada.value) || 0,
+      mg_desejada: parseValorNumerico(mg_desejada.value) || 0,
       id_metodo: selectedMethod.value?.id ?? 0,
       resultado: calculo.value.resultado ?? 0
     }
@@ -385,6 +418,7 @@ const exportarParaExcel = async () => {
 
 
 <style scoped>
+
 .resultInformations {
   font-family: 'Konkhmer Sleokchher';
   display: flex;
@@ -399,6 +433,7 @@ const exportarParaExcel = async () => {
   width: 100%;
   justify-content: center;
   flex-direction: column;
+
 }
 
 .form-transitions-container {
@@ -415,6 +450,66 @@ const exportarParaExcel = async () => {
   height: 100%;
   min-height: 20em;
   width: 100%;
+}
+
+.cta-step2 {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+}
+
+.tooltip-aluminio {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1em;
+}
+
+
+.tooltip-icon {
+  position: relative;
+  display: inline-block;
+  align-self: flex-end;
+  margin-right: 2.3em;
+  width: 0;
+}
+
+
+.tooltip-icon .tooltiptext {
+  font-family: 'Konkhmer Sleokchher';
+  font-size: 0.8em;
+  visibility: hidden;
+  width: 200px;
+  background-color: rgba(133, 175, 123, 0.699);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 1em 0.6em;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -6.7em;
+}
+
+.tooltip-icon .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(133, 175, 123, 0.699) transparent transparent transparent;
+}
+
+.tooltip-icon:hover .tooltiptext {
+  visibility: visible;
+}
+
+
+.tooltip-icon img {
+  width: 1.8em;
 }
 
 
@@ -640,6 +735,28 @@ const exportarParaExcel = async () => {
     font-size: 0.8em;
   }
 
+  .tooltip-icon .tooltiptext{
+    margin-left: -8.7em ;
+  }
+
+  .tooltip-aluminio .tooltiptext {
+    margin-left: -7em;
+
+  }
+
+  .tooltip-icon {
+    width: 0;
+  }
+
+  .tooltip-aluminio .tooltip-icon img {
+    width: 1.7em;
+
+  }
+
+
+
+
+
 }
 
 
@@ -670,6 +787,22 @@ const exportarParaExcel = async () => {
   .container-form-calculator {
     padding: 5em 3em;
   }
+  
+  .tooltip-aluminio {
+    font-size: 0.8em;
+  }
+
+  .tooltip-aluminio .tooltip-icon img {
+    width: 1.3em;
+
+  }
+
+
+  .tooltip-aluminio .tooltiptext {
+    margin-left: -6.5em;
+    width: 150px;
+
+  }
 
 }
 
@@ -677,6 +810,7 @@ const exportarParaExcel = async () => {
 
   .next-and-back {
     flex-wrap: wrap;
+    gap: 1em;
 
   }
 
@@ -705,6 +839,21 @@ const exportarParaExcel = async () => {
 
 }
 
+@media screen and (max-width:769px) {
+
+.register-stepper .step {
+  font-size: 0.8em;
+}
+
+.step-description {
+  font-size: 0.7em;
+}
+
+.container-form-calculator {
+  padding: 5em 3em;
+}
+
+}
 
 
 
@@ -712,6 +861,11 @@ const exportarParaExcel = async () => {
 
   .container-method-calculator {
     padding: 5em 4em;
+  }
+
+  .tooltip-icon .tooltiptext {
+    width: 150px;
+    margin-left: -6.2em;
   }
 
   @media screen and (max-width:769px) {

@@ -32,7 +32,6 @@ const makeExcel = async (info: any) => {
     const payload = {
       ctc: info.ctc,
       magnesio: info.magnesio,
-      argila: info.argila,
       calcio: info.calcio,
       prnt: info.prnt,
       aluminio: info.aluminio,
@@ -78,6 +77,12 @@ const proximaPagina = () => {
   }
 }
 
+
+
+function formatarDecimalBR(valor: number | string): string {
+  if (valor === null || valor === undefined || isNaN(Number(valor))) return '-'
+  return valor.toString().replace('.', ',')
+}
 onMounted(() => {
   buscarCalculos()
 })
@@ -85,11 +90,11 @@ onMounted(() => {
 
 <template>
   <div class="checkbox-molecule">
-    <div class="info" v-for="(info, index) in infos" :key="index">
+    <div class="info" v-for="(info, index) in infos.slice().reverse()" :key="index">
       <CheckBoxAtom class="check" @exportar="makeExcel(info)">
         <p>Data: {{ formatarData(info.data_calculo) }}</p>
         <p>Método: {{ metodoLabels[info.id_metodo] }}</p>
-        <p>Necessidade de calagem: {{ info.resultado }}</p>
+        <p>Necessidade de calagem: {{ formatarDecimalBR(info.resultado)}} ton ha⁻¹</p>
       </CheckBoxAtom>
     </div>
 
