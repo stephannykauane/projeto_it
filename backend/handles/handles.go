@@ -1,11 +1,12 @@
 package handles
 
 import (
+	"fmt"
 	"net/http"
 	"time"
+
 	_ "github.com/lib/pq"
 	"github.com/stephannykauane/projeto_it/backend/services"
-	
 )
 
 
@@ -27,6 +28,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("SignUp method recebido:", r.Method)
 
     if r.Method != http.MethodPost {
         w.WriteHeader(http.StatusMethodNotAllowed)
