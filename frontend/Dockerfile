@@ -1,4 +1,3 @@
-
 FROM node:20 AS builder
 
 WORKDIR /app
@@ -9,17 +8,11 @@ RUN npm install
 
 COPY . .
 
-FROM builder AS dev
-
-CMD ["npm", "run", "dev"]
-
-FROM builder AS prod-builder
-
 RUN npm run build
 
-FROM nginx:alpine AS prod
+FROM nginx:alpine
 
-COPY --from=prod-builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 
