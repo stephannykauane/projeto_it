@@ -9,4 +9,6 @@ import { router } from './scripts/index.js'
 const pinia = createPinia()
 pinia.use(piniaPluginPersistedState)
 
+console.log('ENV:', import.meta.env)
+
 createApp(App).use(pinia).use(router).mount('#app')
