@@ -27,7 +27,7 @@ func main() {
 
 	fmt.Println("Servidor Go iniciado na porta " + port)
 
-	err := http.ListenAndServe(":"+port, headers.SetHeaders(mux))
+	err := http.ListenAndServe(":"+port, mux)
 	if err != nil {
 		fmt.Println("Erro ao iniciar o servidor:", err)
 	}

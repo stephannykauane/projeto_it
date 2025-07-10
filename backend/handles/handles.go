@@ -1,7 +1,6 @@
 package handles
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -29,7 +28,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
 
-	fmt.Println("SignUp method recebido:", r.Method)
 
     if r.Method != http.MethodPost {
         w.WriteHeader(http.StatusMethodNotAllowed)
