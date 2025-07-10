@@ -9,6 +9,10 @@ import (
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 var (
@@ -19,6 +23,7 @@ var (
 	dbname   string
 )
 
+
 func getEnv(key, fallback string) string {
 	val := os.Getenv(key)
 	if val == "" {
@@ -27,8 +32,8 @@ func getEnv(key, fallback string) string {
 	return val
 }
 
+
 func init() {
-	
 	if os.Getenv("GO_ENV") != "production" {
 		if err := godotenv.Load(); err != nil {
 			log.Println("Aviso: erro ao carregar o arquivo .env. funcionando com os default values.")
@@ -50,14 +55,35 @@ func init() {
 
 
 func ConnectDB() *sql.DB {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-		host, port, user, password, dbname)
+	psqlInfo := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname,
+	)
 
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
 	}
 	return db
+}
+
+
+func RunMigrations() {
+	dsn := fmt.Sprintf(
+		"postgres://%s:%s@%s:%d/%s?sslmode=disable",
+		user, password, host, port, dbname,
+	)
+
+	m, err := migrate.New("file://internal/database/migrations", dsn)
+	if err != nil {
+		log.Fatalf("Erro ao inicializar migrations: %v", err)
+	}
+
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		log.Fatalf("Erro ao aplicar migrations: %v", err)
+	}
+
+	fmt.Println("Migrations aplicadas com sucesso!")
 }
 
 func Database() {
@@ -70,4 +96,6 @@ func Database() {
 		panic(err)
 	}
 	fmt.Println("Conexão com o banco de dados realizada com sucesso!")
+
+	RunMigrations() 
 }
