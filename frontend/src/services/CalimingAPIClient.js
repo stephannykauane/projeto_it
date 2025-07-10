@@ -1,7 +1,7 @@
 class CalimingAPIClient {
 
     constructor() {
-        this.baseUrl = import.meta.env.VITE_API_URL;
+        this.baseUrl = "http://caliming-backend-lb5bdj-b519c8-92-112-177-3.traefik.me";
     }
     
   
