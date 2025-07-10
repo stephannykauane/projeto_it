@@ -24,6 +24,9 @@ const handleCadastro = async () => {
         return 
     }
 
+
+  console.log('Base URL no setup:', calimingAPI.baseUrl)
+
     try {
         await authService.signUp({
             email: email.value,
