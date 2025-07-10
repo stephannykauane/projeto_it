@@ -15,6 +15,7 @@ class CalimingAPIClient {
         }
 
         try {
+            console.log("URL: ", this.baseUrl)
             const resp = await fetch(`${this.baseUrl}${path}`, {
                 method,
                 headers,
