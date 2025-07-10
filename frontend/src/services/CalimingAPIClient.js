@@ -1,8 +1,7 @@
 class CalimingAPIClient {
 
     constructor() {
-        this.baseUrl = import.meta.env.VITE_API_BASE_URL;
-        console.log(this.baseUrl)
+        this.baseUrl = import.meta.env.VITE_API_URL;
     }
     
   
