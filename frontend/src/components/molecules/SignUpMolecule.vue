@@ -5,6 +5,7 @@ import TextAtom from '../atoms/TextAtom.vue';
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import authService from '../../services/authService';
+import calimingAPI from '../../services/CalimingAPIClient';
 
 const email = ref('')
 const senha = ref ('')
@@ -12,6 +13,9 @@ const confirmarSenha = ref ('')
 const nome = ref('')
 const erro = ref('')
 const router = useRouter()  
+
+
+console.log('Base URL no setup:', calimingAPI.baseUrl)
 
 
 const handleCadastro = async () => {
