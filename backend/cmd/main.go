@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-
 	"github.com/stephannykauane/projeto_it/backend/db"
-	"github.com/stephannykauane/projeto_it/backend/headers"
 	"github.com/stephannykauane/projeto_it/backend/routes"
 )
 
