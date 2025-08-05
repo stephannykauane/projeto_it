@@ -21,9 +21,9 @@
         <section v-if="step === 1">
           <form class="calculator-stepper">
             <div class="areaInformations">
-              <TextInputMolecule text="Consultor:" v-model="consultor" />
+              <TextInputMolecule text="Consultor/Proprietário:" v-model="consultor" />
               <TextInputMolecule text="Propriedade:" v-model="propriedade" />
-              <TextInputMolecule text="Área/talhão:" v-model="area" />
+              <TextInputMolecule text="Identificação do talhão:" v-model="area" />
             </div>
           </form>
         </section>
@@ -35,8 +35,21 @@
             <div class="metodoChoice">
               <div class="metodos">
                 <div v-for="metodo in metodos" :key="metodo.id" class="metodo">
-                  <button type="button" class="buttonChange" @click="changeMethod(metodo)">
+                  <button type="button" class="buttonChange" @click="changeMethod(metodo)"
+                    :class="{ 'especial-aluminio': metodo.id === 4 }">
                     {{ metodo.label }}
+
+                    <template v-if="metodo.id === 4">
+                      <div class="button-info-wrapper">
+                        <div class="divider"></div>
+                        <button type="button" class="info-button" @click.stop="toggleTooltip1">
+                          <img src="../../../src/assets/info-icon.svg" alt="info" />
+                        </button>
+                        <div class="tooltip-clicked-aluminio" v-if="showTooltip1">
+                          Método sugerido exclusivamente para solos com menos de 15% de argila
+                        </div>
+                      </div>
+                    </template>
                   </button>
                 </div>
               </div>
@@ -70,6 +83,26 @@
                   <TextInputMolecule text="CaO do corretivo (%):" v-model="caO" />
                   <TextInputMolecule text="Porcentagem de Ca desejada (%):" v-model="ca_desejada" />
                 </div>
+
+                <div class="opcional-date">
+                  <div>
+                    <p>Dados adicionais: </p>
+                  </div>
+
+                  <div class="button-info-wrapper">
+                    <button type="button" class="info-button" @click.stop="toggleTooltip1">
+                      <img src="../../../src/assets/info-icon.svg" alt="info" />
+                    </button>
+                    <div class="tooltip-clicked" v-if="showTooltip1">
+                      Os dados abaixo podem ser preenchidos opcionalmente, sendo apenas necessários para oferecer uma análise mais completa.
+                    </div>
+                  </div>
+
+                </div>
+                <div class="children">
+                  <TextInputMolecule text="MgO do corretivo (%):" v-model="mgO" />
+                  <TextInputMolecule text="Teor de Mg da análise (cmol dm⁻³): " v-model="teor_mg" />
+                </div>
               </div>
 
               <div class="child" v-else-if="selectedMethod?.key === 'saturacaoMagnesio'">
@@ -82,6 +115,25 @@
                   <TextInputMolecule text="MgO do corretivo (%):" v-model="mgO" />
                   <TextInputMolecule text="Porcentagem de Mg desejada (%):" v-model="mg_desejada" />
                 </div>
+                <div class="opcional-date">
+                  <div>
+                    <p>Dados adicionais: </p>
+                  </div>
+
+                  <div class="button-info-wrapper">
+                    <button type="button" class="info-button" @click.stop="toggleTooltip1">
+                      <img src="../../../src/assets/info-icon.svg" alt="info" />
+                    </button>
+                    <div class="tooltip-clicked" v-if="showTooltip1">
+                      Os dados abaixo podem ser preenchidos opcionalmente, sendo apenas necessários para oferecer uma análise mais completa.
+                    </div>
+                  </div>
+
+                </div>
+                <div class="children">
+                  <TextInputMolecule text="CaO do corretivo (%):" v-model="caO" />
+                  <TextInputMolecule text="Teor de Ca da análise (cmol dm⁻³): " v-model="teor_ca" />
+                </div>
               </div>
 
               <div class="child" v-else-if="selectedMethod?.key === 'aluminioTrocavel'">
@@ -93,17 +145,7 @@
                   <TextInputMolecule text="Magnésio (cmol dm⁻³):" v-model="magnesio" />
                   <TextInputMolecule text="Alumínio (cmol dm⁻³):" v-model="aluminio" />
                   <TextInputMolecule text="PRNT do corretivo (%):" v-model="prnt" />
-                </div>
-                <div class="tooltip-aluminio">
-                  <div class="tooltip-icon">
-                    <img src="../../../src/assets/info-icon.svg">
-                    <div>
-                      <span class="tooltiptext">Método sugerido exclusivamente para solos com menos de 15% de
-                        argila</span>
-                    </div>
-                  </div>
-                </div>
-
+                </div> 
               </div>
             </div>
           </form>
@@ -147,11 +189,38 @@
                 <TextDisplayMolecule label="PRNT do corretivo (%):" :value="formatarDecimalBR(calculo?.prnt)" />
               </div>
 
+
+
               <div class="resultadoCalagem">
                 <h2>Resultado</h2>
                 <TextDisplayMolecule label="Necessidade de Calagem (ton ha⁻¹):"
                   :value="formatarDecimalBR(calculo?.resultado)" />
               </div>
+
+
+              <!-- v-if="calculo?.saturacao_mg !== null  && calculo?.relacao !== null" -->
+              <div v-if="hasAdicionais && selectedMethod?.key === 'saturacaoCalcio'"> 
+                <div class="resultados-adicionais">
+                  <h2>Informações adicionais</h2>
+                  <div class="analiseData">
+                    <TextDisplayMolecule label="Saturação de Mg na CTC (%):" :value="formatarDecimalBR(calculo?.sat_extra )"  />
+                    <TextDisplayMolecule label="Relação Ca/Mg esperada:" :value="formatarDecimalBR(calculo?.relacao_ca_mg )" />
+                  </div>
+                </div>
+              </div>
+
+              <div v-if="hasAdicionais && selectedMethod?.key === 'saturacaoMagnesio' "> 
+                <div class="resultados-adicionais">
+                  <h2>Informações adicionais</h2>
+                  <div class="analiseData">
+                    <TextDisplayMolecule label="Saturação de Calcio na CTC (%):" :value="formatarDecimalBR(calculo?.SatExtra)" />
+                    <TextDisplayMolecule label="Relação Ca/Mg esperada:" :value="formatarDecimalBR(calculo?.RelacaoCaMg)"/>
+                  </div>
+                </div>
+              </div>
+
+
+
             </div>
           </form>
         </section>
@@ -175,11 +244,12 @@
             <div>
               <ButtonAlterarAtom text="< Voltar" @click="back" />
             </div>
-            <div class="tooltip-icon">
-              <img src="../../../src/assets/info-icon.svg">
-              <div>
-                <span class="tooltiptext">Os cálculos sugeridos têm por base informações publicadas por Sousa e Lobato
-                  (2004), no livro "Cerrado: Correção do Solo e Adubação"</span>
+            <div class="button-info-wrapper">
+              <button type="button" class="info-button-method" @click.stop="toggleTooltip2">
+                <img src="../../../src/assets/info-icon.svg" alt="info" />
+              </button>
+              <div class="tooltip-clicked-method" v-if="showTooltip2">
+                Os cálculos sugeridos têm por base informações publicadas por Sousa e Lobato(2004), no livro "Cerrado: Correção do Solo e Adubação"
               </div>
             </div>
           </div>
@@ -218,7 +288,7 @@
 
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 
 import TextInputMolecule from '../molecules/TextInputMolecule.vue'
@@ -247,7 +317,19 @@ const teor_ca = ref('')
 const error = ref('')
 const stepDescriptions = ['Informações da área', 'Escolha do método', 'Dados da análise', 'Resultado']
 const calculo = ref<any>(null)
+const showTooltip1 = ref(false)
+const showTooltip2 = ref(false)
 
+
+function toggleTooltip1() {
+  showTooltip1.value = !showTooltip1.value
+
+}
+
+function toggleTooltip2() {
+  showTooltip2.value = !showTooltip2.value
+
+}
 const metodos = [
   { id: 1, key: 'saturacaoBases', label: 'Saturação por Bases' },
   { id: 2, key: 'saturacaoMagnesio', label: 'Saturação de Magnésio na CTC' },
@@ -413,11 +495,130 @@ const exportarParaExcel = async () => {
   }
 }
 
+const hasAdicionais = computed(() => {
+  const extra = Number(calculo.value?.sat_extra ?? 0)
+  const relacao = Number(calculo.value?.relacao_ca_mg ?? 0)
+  return extra > 0 && relacao > 0
+})
+
 
 </script>
 
 
 <style scoped>
+
+.opcional-date {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.3em;
+  margin-top: 1em;
+  flex-direction: row;
+  align-items: center;
+}
+
+.opcional-date p {
+  color: #ffffff;
+}
+
+.especial-aluminio {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.button-info-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.divider {
+  width: 1px;
+  height: 1.7em;
+  background-color: #94af8b;
+  margin: 0 0.5em;
+}
+
+.info-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.1em;
+  display: flex;
+  align-items: center;
+}
+
+.info-button-method {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.1em;
+  display: flex;
+  align-items: center;
+}
+
+.info-button img {
+  width: 1.3em;
+}
+
+.tooltip-clicked {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-top: 0.5em;
+  transform: translateX(-50%);
+  right: 0;
+  background-color: rgba(133, 175, 123, 0.699);
+  color: #fff;
+  font-family: 'Konkhmer Sleokchher';
+  font-size: 0.75em;
+  padding: 0.7em;
+  border-radius: 6px;
+  width: 220px;
+  z-index: 10;
+  text-align: center;
+
+}
+
+.tooltip-clicked-aluminio {
+  position: absolute;
+  top: 100%;
+  left: 70%;
+  margin-top: 0.5em;
+  transform: translateX(-50%);
+  right: 0;
+  background-color: rgba(133, 175, 123, 0.699);
+  color: #fff;
+  font-family: 'Konkhmer Sleokchher';
+  font-size: 0.75em;
+  padding: 0.7em;
+  border-radius: 6px;
+  width: 220px;
+  z-index: 10;
+  text-align: center;
+
+}
+
+.tooltip-clicked-method {
+  position: absolute;
+  top: -180%;
+  left: 50%;
+  transform: translateX(-50%);
+  right: 0;
+  background-color: rgba(133, 175, 123, 0.699);
+  color: #fff;
+  font-family: 'Konkhmer Sleokchher';
+  font-size: 0.75em;
+  padding: 0.7em;
+  border-radius: 6px;
+  width: 220px;
+  z-index: 10;
+  text-align: center;
+
+}
+
+
 
 .resultInformations {
   font-family: 'Konkhmer Sleokchher';
@@ -459,38 +660,31 @@ const exportarParaExcel = async () => {
 
 }
 
-.tooltip-aluminio {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1em;
-}
 
 
-.tooltip-icon {
-  position: relative;
-  display: inline-block;
-  align-self: flex-end;
-  margin-right: 2.3em;
-  width: 0;
-}
 
-
-.tooltip-icon .tooltiptext {
-  font-family: 'Konkhmer Sleokchher';
-  font-size: 0.8em;
-  visibility: hidden;
-  width: 200px;
-  background-color: rgba(133, 175, 123, 0.699);
-  color: #fff;
-  text-align: center;
-  border-radius: 6px;
-  padding: 1em 0.6em;
+.tooltip-clicked::after, .tooltip-clicked-aluminio::after {
+  content: "";
   position: absolute;
-  z-index: 1;
-  bottom: 150%;
+  top: -10px;
   left: 50%;
-  margin-left: -6.7em;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent transparent rgba(133, 175, 123, 0.699) transparent;
 }
+
+.tooltip-clicked-method::after {
+  content: "";
+  position: absolute;
+  top: 107px;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(133, 175, 123, 0.699) transparent  transparent transparent;
+}
+
 
 .tooltip-icon .tooltiptext::after {
   content: "";
@@ -541,6 +735,9 @@ const exportarParaExcel = async () => {
 }
 
 .buttonChange {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-family: 'Konkhmer Sleokchher';
   font-size: 1em;
   width: 100%;
@@ -735,8 +932,8 @@ const exportarParaExcel = async () => {
     font-size: 0.8em;
   }
 
-  .tooltip-icon .tooltiptext{
-    margin-left: -8.7em ;
+  .tooltip-icon .tooltiptext {
+    margin-left: -8.7em;
   }
 
   .tooltip-aluminio .tooltiptext {
@@ -787,7 +984,7 @@ const exportarParaExcel = async () => {
   .container-form-calculator {
     padding: 5em 3em;
   }
-  
+
   .tooltip-aluminio {
     font-size: 0.8em;
   }
@@ -841,17 +1038,17 @@ const exportarParaExcel = async () => {
 
 @media screen and (max-width:769px) {
 
-.register-stepper .step {
-  font-size: 0.8em;
-}
+  .register-stepper .step {
+    font-size: 0.8em;
+  }
 
-.step-description {
-  font-size: 0.7em;
-}
+  .step-description {
+    font-size: 0.7em;
+  }
 
-.container-form-calculator {
-  padding: 5em 3em;
-}
+  .container-form-calculator {
+    padding: 5em 3em;
+  }
 
 }
 

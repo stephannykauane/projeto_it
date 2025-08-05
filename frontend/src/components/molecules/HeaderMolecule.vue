@@ -5,7 +5,7 @@
     </div>    
     <div class="button-caliming">
       <router-link to="login">
-        <ButtonHomeAtom customClass="button-caliming" text="Entrar"></ButtonHomeAtom>
+        <ButtonHomeAtom customClass="button-caliming" text="Login"></ButtonHomeAtom>
       </router-link>
   
     </div>
