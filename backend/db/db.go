@@ -76,7 +76,7 @@ func Database() {
 
 
 func runMigrations() {
-	migrationsPath := "file://backend/internal/migrations"
+	migrationsPath := "file://internal/migrations"
 
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
 		user, password, host, port, dbname)
