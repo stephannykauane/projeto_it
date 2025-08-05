@@ -39,6 +39,8 @@ CREATE TABLE Calculo (
   id SERIAL PRIMARY KEY,
   id_analise INTEGER,
   resultado NUMERIC,
+  sat_extra NUMERIC,
+  relacao_ca_mg NUMERIC,
   data_calculo DATE,
   id_metodo INTEGER
 );

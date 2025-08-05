@@ -5,13 +5,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
-
 	"github.com/stephannykauane/projeto_it/backend/types"
 )
 
 type ResultadoCalculo struct {
+	
 	Result   sql.NullFloat64
 	SatAtual sql.NullFloat64
+	SatExtra sql.NullFloat64
+	RelacaoCaMg sql.NullFloat64
+
 }
 
 func CalculoSatBases(a types.SatBases) (sql.NullFloat64, sql.NullFloat64) {
@@ -42,9 +45,7 @@ func CalculoSatBases(a types.SatBases) (sql.NullFloat64, sql.NullFloat64) {
 
 func CalculoAluminio(b types.Aluminio) sql.NullFloat64 {
 
-    fmt.Println("valores recebidos: ", b.Aluminio)
-	fmt.Println("valores recebidos: ", b.Calcio)
-	fmt.Println("valores recebidos: ", b.Magnesio)
+
 	fatorCorrecao := 100 / b.Prnt
 
 
@@ -77,8 +78,10 @@ func CalculoSatGeneric(
 	kgBase float64,
 	oxido float64,
 	prnt float64,
+	
+	) sql.NullFloat64 {
 
-) sql.NullFloat64 {
+
 
 	cmolNecessario := (ctc * (desejado / 100)) - teor
 	kgElemento := kgBase * cmolNecessario
@@ -97,14 +100,49 @@ func CalculoSatGeneric(
 		result.Float64 = resultado
 		result.Valid = true
 	}
-	fmt.Println("cmolNecessario:", cmolNecessario)
-	fmt.Println("kgElemento:", kgElemento)
-	fmt.Println("kgCorretivo:", kgCorretivo)
-	fmt.Println("xDoKgCorretivo:", xDoKgCorretivo)
-	fmt.Println("resultadoTon (final em toneladas):", resultadoTon)
+
 
 	return result
 
+}
+
+func CalcOptional(
+	tonCorretivo float64,  
+	teorElemento float64,  
+	fatorCorrecao float64, 
+	fatorCorretivo float64,
+	Elemento float64,
+	ctc float64, 
+	prnt float64,          
+) sql.NullFloat64 {
+
+	
+	CorretivoReagido := (tonCorretivo * prnt) / 100
+
+	
+	QtdElementoCorretivo := CorretivoReagido * (Elemento/100)
+
+	ElementoConvertidoMg := (QtdElementoCorretivo * fatorCorretivo)
+
+	ElementoConvertidoMg = ElementoConvertidoMg * 1000
+
+
+	ConvertidoFinal := (ElementoConvertidoMg / fatorCorrecao) + teorElemento
+
+	ResultadoSaturacao := (ConvertidoFinal / ctc) * 100
+
+	ResultadoSaturacao = math.Round(ResultadoSaturacao * 10) / 10
+
+
+	var result sql.NullFloat64
+	if math.IsNaN(ResultadoSaturacao) {
+		result.Valid = false
+	} else {
+		result.Float64 = ResultadoSaturacao
+		result.Valid = true
+	}
+
+	return result
 }
 
 func CalculoSatCalcio(c types.SatCalcio) sql.NullFloat64 {
@@ -117,6 +155,8 @@ func CalculoSatCalcio(c types.SatCalcio) sql.NullFloat64 {
 		c.CaO,
 		float64(c.Prnt),
 	)
+
+
 }
 
 func CalculoSatMagnesio(c types.SatMagnesio) sql.NullFloat64 {
@@ -129,6 +169,7 @@ func CalculoSatMagnesio(c types.SatMagnesio) sql.NullFloat64 {
 		c.MgO,
 		float64(c.Prnt),
 	)
+
 }
 
 func RegraDeTres(a float64, b float64, c float64) float64 {
@@ -164,10 +205,34 @@ func Calculando(jsonData []byte, MetodoID int) (ResultadoCalculo, error) {
 		}
 
 		resultado.Result = CalculoSatMagnesio(Magnesio)
+
+		if Magnesio.CaO > 0 && Magnesio.Ctc > 0 {
+			resultado.SatExtra = CalcOptional(
+				resultado.Result.Float64,
+				Magnesio.TeorCa,
+				400.78,
+				0.7149,
+				Magnesio.CaO,
+				Magnesio.Ctc,
+				float64(Magnesio.Prnt),
+			)
+		}
+
+		if Magnesio.TeorCa > 0 {
+			relacaoCaMg := (resultado.SatExtra.Float64/10) / ((Magnesio.MgDesejada/100) * Magnesio.Ctc)
+			relacaoCaMg = math.Round(relacaoCaMg * 100) / 100
+			resultado.RelacaoCaMg = sql.NullFloat64{
+				Float64: relacaoCaMg,
+				Valid: true,
+			}
+	
+		}
 	case 3:
 
 	
 		var Calcio types.SatCalcio
+
+
 		err = json.Unmarshal(jsonData, &Calcio)
 
 		if err != nil {
@@ -176,6 +241,31 @@ func Calculando(jsonData []byte, MetodoID int) (ResultadoCalculo, error) {
 		}
 
 		resultado.Result = CalculoSatCalcio(Calcio)
+
+		if Calcio.MgO > 0 && Calcio.Ctc > 0 {
+			resultado.SatExtra = CalcOptional(
+				resultado.Result.Float64,
+				Calcio.TeorMg,
+				243.05,
+				0.603,
+				Calcio.MgO,
+				Calcio.Ctc,
+				float64(Calcio.Prnt),
+			)
+
+			
+		}
+
+		if Calcio.TeorMg > 0 {
+			fmt.Println("teor ca", Calcio.CaO)
+			relacaoCaMg := ((Calcio.CaDesejada / 100) * Calcio.Ctc) / (resultado.SatExtra.Float64/10)
+			relacaoCaMg = math.Round(relacaoCaMg * 100)/100
+			resultado.RelacaoCaMg = sql.NullFloat64{
+				Float64: relacaoCaMg,
+				Valid: true,
+			}
+
+		}
 
 	case 4:
 		var aluminio types.Aluminio

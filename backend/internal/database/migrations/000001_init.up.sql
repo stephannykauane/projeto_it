@@ -5,7 +5,6 @@ CREATE TABLE Usuario (
   email VARCHAR UNIQUE
 );
 
-
 CREATE TABLE Area (
   id SERIAL PRIMARY KEY,
   consultor VARCHAR,
@@ -34,11 +33,12 @@ CREATE TABLE Analise (
   id_area INTEGER
 );
 
-
 CREATE TABLE Calculo (
   id SERIAL PRIMARY KEY,
   id_analise INTEGER,
   resultado NUMERIC,
+  sat_extra NUMERIC,
+  relacao_ca_mg NUMERIC,
   data_calculo DATE,
   id_metodo INTEGER
 );

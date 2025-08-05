@@ -205,9 +205,9 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	calculoQuery := `INSERT INTO "Calculo" ("id_analise", "resultado", "data_calculo", "id_metodo") 
-					 VALUES ($1, $2, current_date, $3)`
-	_, err = db.Exec(calculoQuery, analiseID, resultado.Result.Float64, metodo.MetodoID)
+	calculoQuery := `INSERT INTO "Calculo" ("id_analise", "resultado", "data_calculo", "id_metodo", "sat_extra", "relacao_ca_mg") 
+					 VALUES ($1, $2, current_date, $3, $4, $5)`
+	_, err = db.Exec(calculoQuery, analiseID, resultado.Result.Float64, metodo.MetodoID, resultado.SatExtra.Float64, resultado.RelacaoCaMg.Float64)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao inserir cálculo: %v", err), http.StatusInternalServerError)
 		return
@@ -219,6 +219,8 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 			c.resultado, 
 			c.data_calculo, 
 			c.id_metodo,
+			c.sat_extra,
+			c.relacao_ca_mg,
 			a.magnesio,
 			a.aluminio,
 			a.calcio,
@@ -247,6 +249,8 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 		&calculoDetalhado.Resultado,
 		&calculoDetalhado.DataCalculo,
 		&calculoDetalhado.MetodoID,
+		&calculoDetalhado.SatExtra,
+		&calculoDetalhado.RelacaoCaMg,
 		&calculoDetalhado.Magnesio,
 		&calculoDetalhado.Aluminio,
 		&calculoDetalhado.Calcio,

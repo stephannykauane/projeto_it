@@ -13,8 +13,8 @@ func RegisterRoutes(mux *http.ServeMux) {
 	mux.Handle("/login", headers.SetHeaders(http.HandlerFunc(handles.Login)))
 	mux.Handle("/analise", headers.SetHeaders(middleware.Auth(http.HandlerFunc(handles.Analise))))
 	mux.Handle("/excel", headers.SetHeaders(http.HandlerFunc(handles.Excel)))
-	mux.Handle("/listar", middleware.Auth(http.HandlerFunc(handles.ListaCalculos)))
+	mux.Handle("/listar", headers.SetHeaders(middleware.Auth(http.HandlerFunc(handles.ListaCalculos))))
 	mux.Handle("/logout", headers.SetHeaders(http.HandlerFunc(handles.Logout)))
-	mux.Handle("/profile", middleware.Auth(http.HandlerFunc(handles.PerfilUsuario)))
+	mux.Handle("/profile", headers.SetHeaders(middleware.Auth(http.HandlerFunc(handles.PerfilUsuario))))
 	mux.Handle("/alterar", headers.SetHeaders(middleware.Auth(http.HandlerFunc(handles.DadosUsuario))))
 }
