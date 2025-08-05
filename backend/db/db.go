@@ -3,14 +3,16 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
+	"net/url"
+	"os"
+	"strconv"
+
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	"log"
-	"os"
-	"strconv"
 )
 
 var (
@@ -75,8 +77,14 @@ func Database() {
 }
 
 func RunMigrations() {
+
+	escapePassword := url.QueryEscape(password)
+	escapedUser := url.QueryEscape(user)
+	escapedHost := url.QueryEscape(host)
+	escapedDBname := url.QueryEscape(dbname)
+
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
-		user, password, host, port, dbname)
+		escapedUser, escapePassword, escapedHost, port, escapedDBname)
 
 	m, err := migrate.New(
 		"file://internal/database/migrations", 
