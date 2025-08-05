@@ -1,4 +1,4 @@
-ALTER TABLE usuario RENAME TO "Usuario";
-ALTER TABLE analise RENAME TO "Analise";
-ALTER TABLE calculo RENAME TO "Calculo";
-ALTER TABLE area RENAME TO "Area";
+ALTER TABLE "Usuario" RENAME TO usuario;
+ALTER TABLE "Analise" RENAME TO analise;
+ALTER TABLE "Calculo" RENAME TO calculo;
+ALTER TABLE "Area" RENAME TO area;
