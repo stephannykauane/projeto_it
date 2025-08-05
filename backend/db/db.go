@@ -72,6 +72,8 @@ func Database() {
 		panic(err)
 	}
 	fmt.Println("Conexão com o banco de dados realizada com sucesso!")
+
+	runMigrations()
 }
 
 
