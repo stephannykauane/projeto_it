@@ -5,7 +5,7 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY ./backend . 
+COPY . . 
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o backend_it ./cmd
 
