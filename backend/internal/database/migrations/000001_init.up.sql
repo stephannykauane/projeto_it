@@ -1,11 +1,11 @@
-CREATE TABLE Usuario (
+CREATE TABLE usuario (
   id SERIAL PRIMARY KEY,
   senha VARCHAR,
   nome VARCHAR,
   email VARCHAR UNIQUE
 );
 
-CREATE TABLE Area (
+CREATE TABLE area (
   id SERIAL PRIMARY KEY,
   consultor VARCHAR,
   propriedade VARCHAR,
@@ -13,7 +13,7 @@ CREATE TABLE Area (
   id_usuario INTEGER
 );
 
-CREATE TABLE Analise (
+CREATE TABLE analise (
   id SERIAL PRIMARY KEY,
   id_usuario INTEGER,
   magnesio NUMERIC,
@@ -25,15 +25,15 @@ CREATE TABLE Analise (
   argila NUMERIC,
   sat_atual NUMERIC,
   teor_ca NUMERIC,
-  caO NUMERIC,
-  mgO NUMERIC,
+  cao NUMERIC,
+  mgo NUMERIC,
   teor_mg NUMERIC,
   mg_desejada NUMERIC,
   ca_desejada NUMERIC,
   id_area INTEGER
 );
 
-CREATE TABLE Calculo (
+CREATE TABLE calculo (
   id SERIAL PRIMARY KEY,
   id_analise INTEGER,
   resultado NUMERIC,
@@ -43,14 +43,14 @@ CREATE TABLE Calculo (
   id_metodo INTEGER
 );
 
-ALTER TABLE Area
-  ADD CONSTRAINT Area_id_usuario_fkey FOREIGN KEY (id_usuario) REFERENCES Usuario(id);
+ALTER TABLE area
+  ADD CONSTRAINT area_id_usuario_fkey FOREIGN KEY (id_usuario) REFERENCES usuario(id);
 
-ALTER TABLE Analise
-  ADD CONSTRAINT Analise_id_usuario_fkey FOREIGN KEY (id_usuario) REFERENCES Usuario(id);
+ALTER TABLE analise
+  ADD CONSTRAINT analise_id_usuario_fkey FOREIGN KEY (id_usuario) REFERENCES usuario(id);
 
-ALTER TABLE Analise
-  ADD CONSTRAINT fk_analise_area FOREIGN KEY (id_area) REFERENCES Area(id);
+ALTER TABLE analise
+  ADD CONSTRAINT fk_analise_area FOREIGN KEY (id_area) REFERENCES area(id);
 
-ALTER TABLE Calculo
-  ADD CONSTRAINT Calculo_id_analise_fkey FOREIGN KEY (id_analise) REFERENCES Analise(id);
+ALTER TABLE calculo
+  ADD CONSTRAINT Calculo_id_analise_fkey FOREIGN KEY (id_analise) REFERENCES analise(id);

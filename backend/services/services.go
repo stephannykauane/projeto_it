@@ -155,7 +155,7 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 	email := middleware.GetUserEmailFromContext(r.Context())
 
 	var userID int
-	err := db.QueryRow(`SELECT id FROM "Usuario" WHERE email=$1`, email).Scan(&userID)
+	err := db.QueryRow(`SELECT id FROM usuario WHERE email=$1`, email).Scan(&userID)
 	if err != nil {
 		http.Error(w, "Usuário não encontrado", http.StatusUnauthorized)
 		return
@@ -177,7 +177,7 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var areaID int64
-	areaQuery := `INSERT INTO "Area" ("id_usuario", "consultor", "propriedade", "area") VALUES ($1, $2, $3, $4) RETURNING id`
+	areaQuery := `INSERT INTO area (id_usuario, consultor, propriedade, area) VALUES ($1, $2, $3, $4) RETURNING id`
 	err = db.QueryRow(areaQuery, userID, analiseRequest.Consultor, analiseRequest.Propriedade, analiseRequest.Area).Scan(&areaID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao inserir área: %v", err), http.StatusInternalServerError)
@@ -185,8 +185,8 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var analiseID int
-	query := `INSERT INTO "Analise" ("id_usuario", "magnesio", "aluminio", "calcio", "sat_desejada", "prnt", "ctc", "argila", "sat_atual", "teor_ca", "teor_mg", "caO", "mgO", "mg_desejada", "ca_desejada", "id_area") 
-			  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING "id"`
+	query := `INSERT INTO analise (id_usuario, magnesio, aluminio, calcio, sat_desejada, prnt, ctc, argila, sat_atual, teor_ca, teor_mg, cao, mgo, mg_desejada, ca_desejada, id_area) 
+			  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16) RETURNING id`
 	err = db.QueryRow(query, userID, analiseRequest.Magnesio, analiseRequest.Aluminio, analiseRequest.Calcio, analiseRequest.SatD, analiseRequest.Prnt, analiseRequest.Ctc, analiseRequest.Argila, analiseRequest.SatA, analiseRequest.TeorCa, analiseRequest.TeorMg, analiseRequest.CaO, analiseRequest.MgO, analiseRequest.MgDesejada, analiseRequest.CaDesejada, areaID).Scan(&analiseID)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Erro ao inserir análise: %v", err), http.StatusInternalServerError)
@@ -205,7 +205,7 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	calculoQuery := `INSERT INTO "Calculo" ("id_analise", "resultado", "data_calculo", "id_metodo", "sat_extra", "relacao_ca_mg") 
+	calculoQuery := `INSERT INTO calculo (id_analise, resultado, data_calculo, id_metodo, sat_extra, relacao_ca_mg) 
 					 VALUES ($1, $2, current_date, $3, $4, $5)`
 	_, err = db.Exec(calculoQuery, analiseID, resultado.Result.Float64, metodo.MetodoID, resultado.SatExtra.Float64, resultado.RelacaoCaMg.Float64)
 	if err != nil {
@@ -230,17 +230,17 @@ func SaveAnalise(w http.ResponseWriter, r *http.Request) {
 			a.argila,
 			a.sat_atual,
 			a.teor_ca,
-			a."caO",
-			a."mgO",
+			a.cao,
+			a.mgo,
 			a.teor_mg,
 			a.mg_desejada,
 			a.ca_desejada,
 			ar.consultor,
 			ar.propriedade,
 			ar.area
-		FROM "Calculo" c
-		JOIN "Analise" a ON c.id_analise = a.id
-		JOIN "Area" ar ON a.id_area = ar.id
+		FROM calculo c
+		JOIN analise a ON c.id_analise = a.id
+		JOIN area ar ON a.id_area = ar.id
 		WHERE c.id_analise = $1
 		ORDER BY c.data_calculo DESC
 		LIMIT 1
@@ -300,7 +300,7 @@ func EfetuarLogin(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 	var userID int
 
-	err = db.QueryRow(`SELECT id, senha FROM "Usuario" WHERE email=$1`, user.Email).Scan(&userID, &storedHash)
+	err = db.QueryRow(`SELECT id, senha FROM usuario WHERE email=$1`, user.Email).Scan(&userID, &storedHash)
 	if err != nil {
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
 
@@ -348,7 +348,7 @@ func AlterarDados(w http.ResponseWriter, r *http.Request) {
 	email := middleware.GetUserEmailFromContext(r.Context())
 
 	var userID int
-	err := db.QueryRow(`SELECT id FROM "Usuario" WHERE email = $1`, email).Scan(&userID)
+	err := db.QueryRow(`SELECT id FROM usuario WHERE email = $1`, email).Scan(&userID)
 	if err != nil {
 		http.Error(w, "Usuário não encontrado", http.StatusUnauthorized)
 		return
@@ -365,7 +365,7 @@ func AlterarDados(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := `UPDATE "Usuario" SET `
+	query := `UPDATE usuario SET `
 	params := []interface{}{}
 	paramIndex := 1
 
@@ -415,7 +415,7 @@ func EfetuarSignUp(w http.ResponseWriter, r *http.Request) {
 	defer db.Close()
 
 	var exists int
-	err := db.QueryRow(`SELECT COUNT(*) FROM "Usuario" WHERE email = $1`, user.Email).Scan(&exists)
+	err := db.QueryRow(`SELECT COUNT(*) FROM usuario WHERE email = $1`, user.Email).Scan(&exists)
 	if err != nil {
 		http.Error(w, "Erro ao verificar email", http.StatusInternalServerError)
 		return
@@ -427,7 +427,7 @@ func EfetuarSignUp(w http.ResponseWriter, r *http.Request) {
 
 	var userID int
 
-	err = db.QueryRow(`INSERT INTO "Usuario"(email, senha, nome) VALUES ($1, $2, $3) RETURNING id`, user.Email, hashed, user.Nome).Scan(&userID)
+	err = db.QueryRow(`INSERT INTO usuario(email, senha, nome) VALUES ($1, $2, $3) RETURNING id`, user.Email, hashed, user.Nome).Scan(&userID)
 	if err != nil {
 		http.Error(w, "Erro ao executar query: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -468,7 +468,7 @@ func GetDadosUsuario(w http.ResponseWriter, r *http.Request) {
 
 	var user types.Usuario
 
-	err := db.QueryRow(`SELECT nome, email FROM "Usuario" where email = $1`, email).Scan(&user.Nome, &user.Email)
+	err := db.QueryRow(`SELECT nome, email FROM usuario where email = $1`, email).Scan(&user.Nome, &user.Email)
 
 	if err != nil {
 		http.Error(w, "Usuário não encontrado", http.StatusNotFound)
@@ -487,7 +487,7 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 	email := middleware.GetUserEmailFromContext(r.Context())
 
 	var userID int
-	err := db.QueryRow(`SELECT id FROM "Usuario" WHERE email=$1`, email).Scan(&userID)
+	err := db.QueryRow(`SELECT id FROM usuario WHERE email=$1`, email).Scan(&userID)
 	if err != nil {
 		http.Error(w, "Usuário não encontrado", http.StatusUnauthorized)
 		return
@@ -516,8 +516,8 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 	var totalCount int
 	countQuery := `
 		SELECT COUNT(*) 
-		FROM "Calculo" c
-		JOIN "Analise" a ON c.id_analise = a.id
+		FROM calculo c
+		JOIN analise a ON c.id_analise = a.id
 		WHERE a.id_usuario = $1
 	`
 	err = db.QueryRow(countQuery, userID).Scan(&totalCount)
@@ -540,17 +540,17 @@ func ListarCalculos(w http.ResponseWriter, r *http.Request) {
 			a.argila,
 			a.sat_atual,
 			a.teor_ca,
-			a."caO",
-			a."mgO",
+			a.cao,
+			a.mgO,
 			a.teor_mg,
 			a.mg_desejada,
 			a.ca_desejada,
 			ar.consultor,
 			ar.propriedade,
 			ar.area
-		FROM "Calculo" c
-		JOIN "Analise" a ON c.id_analise = a.id
-		JOIN "Area" ar ON a.id_area = ar.id
+		FROM calculo c
+		JOIN analise a ON c.id_analise = a.id
+		JOIN area ar ON a.id_area = ar.id
 		WHERE a.id_usuario = $1
 		ORDER BY c.data_calculo DESC
 		LIMIT $2 OFFSET $3
