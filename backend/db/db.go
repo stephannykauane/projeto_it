@@ -6,9 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
@@ -73,24 +71,5 @@ func Database() {
 	}
 	fmt.Println("Conexão com o banco de dados realizada com sucesso!")
 
-	runMigrations()
 }
 
-
-func runMigrations() {
-	migrationsPath := "file://internal/migrations"
-
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
-		user, password, host, port, dbname)
-
-	m, err := migrate.New(migrationsPath, dsn)
-	if err != nil {
-		log.Fatalf("Erro ao inicializar migrations: %v", err)
-	}
-
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		log.Fatalf("Erro ao aplicar migrations: %v", err)
-	}
-
-	log.Println("Migrations aplicadas com sucesso!")
-}
