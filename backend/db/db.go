@@ -79,7 +79,7 @@ func RunMigrations() {
 		user, password, host, port, dbname)
 
 	m, err := migrate.New(
-		"file://backend/db/migrations", 
+		"file://internal/database/migrations", 
 		dsn,
 	)
 	if err != nil {
