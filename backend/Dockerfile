@@ -15,7 +15,8 @@ WORKDIR /app/
 
 COPY --from=builder /app/backend_it .
 COPY --from=builder /app/assets ./assets
-COPY --from=builder /app/backend/db/migrations ./backend/db/migrations
+COPY --from=builder /app/internal/database/migrations ./internal/database/migrations
+
 
 
 EXPOSE 8080
