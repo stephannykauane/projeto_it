@@ -17,7 +17,7 @@ COPY --from=builder /app/backend_it .
 COPY --from=builder /app/assets ./assets
 
 
-COPY --from=builder /app/internal/migrations ./internal/migrations
+COPY --from=builder /app/internal ./internal
 
 EXPOSE 8080
 
