@@ -15,17 +15,12 @@ const erro = ref('')
 const router = useRouter()  
 
 
-console.log('Base URL no setup:', calimingAPI.baseUrl)
-
-
 const handleCadastro = async () => {
     if (senha.value !== confirmarSenha.value) {
         alert("As senhas não coincidem.")
         return 
     }
 
-
-  console.log('Base URL no setup:', calimingAPI.baseUrl)
 
     try {
         await authService.signUp({

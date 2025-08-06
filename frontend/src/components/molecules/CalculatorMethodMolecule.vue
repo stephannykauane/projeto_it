@@ -198,7 +198,7 @@
               </div>
 
 
-              <!-- v-if="calculo?.saturacao_mg !== null  && calculo?.relacao !== null" -->
+        
               <div v-if="hasAdicionais && selectedMethod?.key === 'saturacaoCalcio'"> 
                 <div class="resultados-adicionais">
                   <h2>Informações adicionais</h2>

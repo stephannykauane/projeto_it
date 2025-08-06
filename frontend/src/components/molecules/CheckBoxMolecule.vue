@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import calimingAPI from '../../services/CalimingAPIClient';
 import CheckBoxAtom from '../atoms/CheckBoxAtom.vue';
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { format } from 'date-fns'
 import dataService from '../../services/dataService';
 
@@ -51,7 +50,6 @@ const makeExcel = async (info: any) => {
     }
 
     await dataService.gerarExcel(payload)
-    console.log('Excel gerado com sucesso')
 
   } catch (err) {
     console.error('Erro ao gerar excel no componente: ', err)
@@ -77,16 +75,49 @@ const proximaPagina = () => {
   }
 }
 
-
-
 function formatarDecimalBR(valor: number | string): string {
   if (valor === null || valor === undefined || isNaN(Number(valor))) return '-'
   return valor.toString().replace('.', ',')
 }
+
+
+const infosReversos = computed(() => infos.value.slice().reverse())
+
 onMounted(() => {
   buscarCalculos()
 })
 </script>
+
+<template>
+  <div class="checkbox-molecule">
+
+
+    <div
+      class="info"
+      v-for="(info, index) in infosReversos"
+      :key="index"
+    >
+      <CheckBoxAtom class="check" @exportar="makeExcel(info)">
+        <p>Data: {{ formatarData(info.data_calculo) }}</p>
+        <p>Método: {{ metodoLabels[info.id_metodo] }}</p>
+        <p>Necessidade de calagem: {{ formatarDecimalBR(info.resultado) }} ton ha⁻¹</p>
+      </CheckBoxAtom>
+    </div>
+
+  
+    <div class="pagination" v-if="infos.length > 0">
+      <button @click="paginaAnterior" :disabled="currentPage === 1"> < Anterior</button>
+      <span>Página {{ currentPage }} de {{ totalPages }}</span>
+      <button @click="proximaPagina" :disabled="currentPage === totalPages">Próxima ></button>
+    </div>
+
+    <div class="pagination" v-else>
+      <p>Parece que ainda não há cálculos a serem exibidos...</p>
+    </div>
+
+  </div>
+</template>
+
 
 <template>
   <div class="checkbox-molecule">
