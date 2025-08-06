@@ -3,8 +3,7 @@ class CalimingAPIClient {
     constructor() {
         this.baseUrl = import.meta.env.VITE_API_BASE_URL;
     }
-    
-  9
+
 
     async sendRequest({ path, method, body }) {
         const token = localStorage.getItem('token');
