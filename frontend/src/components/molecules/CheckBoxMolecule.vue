@@ -104,7 +104,6 @@ onMounted(() => {
       </CheckBoxAtom>
     </div>
 
-  
     <div class="pagination" v-if="infos.length > 0">
       <button @click="paginaAnterior" :disabled="currentPage === 1"> < Anterior</button>
       <span>Página {{ currentPage }} de {{ totalPages }}</span>
@@ -115,29 +114,6 @@ onMounted(() => {
       <p>Parece que ainda não há cálculos a serem exibidos...</p>
     </div>
 
-  </div>
-</template>
-
-
-<template>
-  <div class="checkbox-molecule">
-    <div class="info" v-for="(info, index) in infos.slice().reverse()" :key="index">
-      <CheckBoxAtom class="check" @exportar="makeExcel(info)">
-        <p>Data: {{ formatarData(info.data_calculo) }}</p>
-        <p>Método: {{ metodoLabels[info.id_metodo] }}</p>
-        <p>Necessidade de calagem: {{ formatarDecimalBR(info.resultado)}} ton ha⁻¹</p>
-      </CheckBoxAtom>
-    </div>
-
-    <div class="pagination" v-if="infos.length > 0">
-      <button @click="paginaAnterior" :disabled="currentPage === 1"> < Anterior</button>
-      <span>Página {{ currentPage }} de {{ totalPages }}</span>
-      <button @click="proximaPagina" :disabled="currentPage === totalPages">Próxima ></button>
-    </div>
-
-    <div class="pagination" v-else-if="infos.length === 0">
-      <p>Parece que ainda não há cálculos a serem exibidos...</p>
-    </div>
   </div>
 </template>
 
