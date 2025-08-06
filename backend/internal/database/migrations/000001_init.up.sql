@@ -53,4 +53,4 @@ ALTER TABLE analise
   ADD CONSTRAINT fk_analise_area FOREIGN KEY (id_area) REFERENCES area(id);
 
 ALTER TABLE calculo
-  ADD CONSTRAINT Calculo_id_analise_fkey FOREIGN KEY (id_analise) REFERENCES analise(id);
+  ADD CONSTRAINT calculo_id_analise_fkey FOREIGN KEY (id_analise) REFERENCES analise(id);
