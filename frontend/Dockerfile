@@ -8,6 +8,9 @@ COPY package*.json ./
 RUN npm install
 
 
+COPY public ./public  
+
+
 COPY . .
 
 RUN npm run build
