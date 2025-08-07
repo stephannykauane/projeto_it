@@ -7,45 +7,45 @@ import { useRouter } from 'vue-router'
 import authService from '../../services/authService';
 
 const email = ref('')
-const senha = ref ('')
-const confirmarSenha = ref ('')
+const senha = ref('')
+const confirmarSenha = ref('')
 const nome = ref('')
 const erro = ref('')
-const router = useRouter()  
+const router = useRouter()
 
 
 const handleCadastro = async () => {
-  if (
-    !email.value.trim() ||
-    !senha.value.trim() ||
-    !confirmarSenha.value.trim() ||
-    !nome.value.trim()
-  ) {
-    alert("Preencha todos os campos corretamente.");
-    return;
-  }
-
-
-  if (senha.value !== confirmarSenha.value) {
-    alert("As senhas não coincidem.");
-    return;
-  }
-
-  try {
-    await authService.signUp({
-      email: email.value.trim(),
-      senha: senha.value,
-      nome: nome.value.trim()
-    });
-
-    router.push('/calculator');
-  } catch (err) {
-    if (err.message?.toLowerCase().includes('Email já cadastrado')) {
-    alert('Este email já está em uso. Por favor, use outro.');
-    } else {
-      alert('Erro ao cadastrar. Tente novamente.');
+    if (
+        !email.value.trim() ||
+        !senha.value.trim() ||
+        !confirmarSenha.value.trim() ||
+        !nome.value.trim()
+    ) {
+        alert("Preencha todos os campos corretamente.");
+        return;
     }
-  }
+
+
+    if (senha.value !== confirmarSenha.value) {
+        alert("As senhas não coincidem.");
+        return;
+    }
+
+    try {
+        await authService.signUp({
+            email: email.value.trim(),
+            senha: senha.value,
+            nome: nome.value.trim()
+        });
+
+        router.push('/calculator');
+    } catch (err) {
+        if (err.message?.toLowerCase().includes('Email já cadastrado')) {
+            alert('Este email já está em uso. Por favor, use outro.');
+        } else {
+            alert('Erro ao cadastrar. Tente novamente.');
+        }
+    }
 }
 
 
@@ -53,49 +53,52 @@ const handleCadastro = async () => {
 </script>
 
 <template>
-<div class="login-molecule">
-    <div class="caliming-text">
-        <TextAtom text="CALIMING"/>
-    </div>
-    <hr/>
-    <div class="experiencia-text">
-        <TextAtom text="Faça parte dessa experiência"/>                      
-    </div>  
-    <div class="inputs-login">
-        <div>
-           <InputAtom class="nome" placeholder="Nome" v-model="nome"/> 
+    <div class="login-molecule">
+        <div class="caliming-text">
+            <router-link to="home">
+                <TextAtom class="caliming" text="CALIMING" />
+            </router-link>
         </div>
-        <div>
-            <InputAtom class="email" placeholder="Email" v-model="email"/>
+        <hr />
+        <div class="experiencia-text">
+            <TextAtom text="Faça parte dessa experiência" />
         </div>
-        <div>
-            <InputAtom class="senha" placeholder="Senha" type="password" v-model="senha"/>
-        </div>
-        <div>
-            <InputAtom class="confirmar-senha" v-model="confirmarSenha" type="password" placeholder="Confirmar senha" />
-        </div>
-   
-    </div>  
-    <div class="button-cadastrar">
-        <ButtonGreenAtom text="Cadastrar" @click="handleCadastro"/>
-    </div>  
-    <div class="possui-conta-text">
-     <TextAtom text="Já possui conta?"></TextAtom>
-     <router-link to="login">
-        <TextAtom class="entrar" text="Entrar."/>
-     </router-link>
-    </div>      
+        <div class="inputs-login">
+            <div>
+                <InputAtom class="nome" placeholder="Nome" v-model="nome" />
+            </div>
+            <div>
+                <InputAtom class="email" placeholder="Email" v-model="email" />
+            </div>
+            <div>
+                <InputAtom class="senha" placeholder="Senha" type="password" v-model="senha" />
+            </div>
+            <div>
+                <InputAtom class="confirmar-senha" v-model="confirmarSenha" type="password"
+                    placeholder="Confirmar senha" />
+            </div>
 
-</div>
+        </div>
+        <div class="button-cadastrar">
+            <ButtonGreenAtom text="Cadastrar" @click="handleCadastro" />
+        </div>
+        <div class="possui-conta-text">
+            <TextAtom text="Já possui conta?"></TextAtom>
+            <router-link to="login">
+                <TextAtom class="entrar" text="Entrar." />
+            </router-link>
+        </div>
+
+    </div>
 </template>
 
 <style scoped>
-
 .experiencia-text {
     animation: TextAtom 2s ease-out forwards;
 }
 
-.caliming-text, hr {
+.caliming-text,
+hr {
     animation: TextAtom 2s ease-out forwards;
 }
 
@@ -105,9 +108,10 @@ const handleCadastro = async () => {
         filter: blur(20px);
         opacity: 0;
     }
-   
+
 }
-.login-molecule{
+
+.login-molecule {
     display: flex;
     width: 100%;
     justify-content: center;
@@ -122,8 +126,9 @@ const handleCadastro = async () => {
 @keyframes login {
     from {
         opacity: 0;
-        transform: translateX(-10px); 
+        transform: translateX(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -132,75 +137,76 @@ const handleCadastro = async () => {
 
 
 
-.possui-conta-text{
+.possui-conta-text {
     display: flex;
-    flex-direction:column;
+    flex-direction: column;
     justify-content: center;
     width: 100%;
     margin-top: 15px;
-    font-size: 0.8em ;
+    font-size: 0.8em;
     color: #CAFE9D;
 
 
 }
 
-.caliming-text{
+.caliming-text {
     font-size: 2.5em;
     margin: 15px;
 }
 
-.experiencia-text{
+.experiencia-text {
     color: #CAFE9D;
     margin-top: 1em;
 }
 
-.inputs-login div{
+.inputs-login div {
     margin: 15px 15px;
 }
 
-hr{
+hr {
     margin: 1px 10px;
     color: #ffffff;
 }
 
-.button-cadastrar{
+.button-cadastrar {
     margin: 5px 50px;
-   
+
 }
 
 .entrar {
-    color: #384031 ;
+    color: #384031;
     cursor: pointer;
 }
 
-.entrar:hover{
+.entrar:hover {
     color: #3a4630c7;
 }
 
+.caliming {
+    color: #ffffff;
+}
 
 
 
 
 @media screen and (max-width: 1025px) {
-    .login-molecule{
+    .login-molecule {
         margin: 10px;
     }
-    
+
 }
 
 @media screen and (max-width: 769px) {
-    .login-molecule{
+    .login-molecule {
         margin: 7px;
     }
-    
+
 }
 
 @media screen and (max-width: 480px) {
-    .login-molecule{
+    .login-molecule {
         margin: 0px;
     }
-    
+
 }
-
-
 </style>

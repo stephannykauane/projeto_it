@@ -33,7 +33,9 @@ const handleLogin = async () => {
 <template>
     <div class="login-molecule">
         <div class="caliming-text">
-            <TextAtom text="CALIMING" />
+            <router-link to="home">
+                <TextAtom class="caliming" text="CALIMING" />
+            </router-link>
         </div>
         <hr />
         <div class="bemvindo-text">
@@ -112,6 +114,11 @@ const handleLogin = async () => {
 .caliming-text {
     font-size: 2.5em;
     margin: 15px;
+
+}
+
+.caliming {
+    color: #ffffff;
 }
 
 .bemvindo-text {
