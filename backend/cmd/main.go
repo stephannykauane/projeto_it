@@ -10,7 +10,7 @@ import (
 
 func main() {
 	db.Database()
-	db.RunMigrations()
+	// db.RunMigrations()
 
 	mux := http.NewServeMux()
 	routes.RegisterRoutes(mux)

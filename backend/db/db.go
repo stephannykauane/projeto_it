@@ -4,11 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"net/url"
+	// "net/url"
 	"os"
 	"strconv"
 
-	"github.com/golang-migrate/migrate/v4"
+	// "github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
@@ -76,27 +76,27 @@ func Database() {
 
 }
 
-func RunMigrations() {
+// func RunMigrations() {
 
-	escapePassword := url.QueryEscape(password)
-	escapedUser := url.QueryEscape(user)
-	escapedHost := url.QueryEscape(host)
-	escapedDBname := url.QueryEscape(dbname)
+// 	escapePassword := url.QueryEscape(password)
+// 	escapedUser := url.QueryEscape(user)
+// 	escapedHost := url.QueryEscape(host)
+// 	escapedDBname := url.QueryEscape(dbname)
 
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
-		escapedUser, escapePassword, escapedHost, port, escapedDBname)
+// 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable",
+// 		escapedUser, escapePassword, escapedHost, port, escapedDBname)
 
-	m, err := migrate.New(
-		"file://internal/database/migrations", 
-		dsn,
-	)
-	if err != nil {
-		log.Fatalf("Erro ao iniciar migrator: %v", err)
-	}
+// 	m, err := migrate.New(
+// 		"file://internal/database/migrations", 
+// 		dsn,
+// 	)
+// 	if err != nil {
+// 		log.Fatalf("Erro ao iniciar migrator: %v", err)
+// 	}
 
-	if err := m.Up(); err != nil && err.Error() != "no change" {
-		log.Fatalf("Erro ao aplicar migrations: %v", err)
-	}
+// 	if err := m.Up(); err != nil && err.Error() != "no change" {
+// 		log.Fatalf("Erro ao aplicar migrations: %v", err)
+// 	}
 
-	log.Println("✅ Migrations aplicadas com sucesso.")
-}
+// 	log.Println("✅ Migrations aplicadas com sucesso.")
+// }

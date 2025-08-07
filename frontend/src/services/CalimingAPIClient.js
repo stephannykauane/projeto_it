@@ -13,7 +13,7 @@ class CalimingAPIClient {
             headers['Authorization'] = `Bearer ${token}`;
         }
 
-        try {
+        try { 
             const resp = await fetch(`${this.baseUrl}${path}`, {
                 method,
                 headers,

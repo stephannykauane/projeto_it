@@ -5,7 +5,6 @@ import TextAtom from '../atoms/TextAtom.vue';
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import authService from '../../services/authService';
-import calimingAPI from '../../services/CalimingAPIClient';
 
 const email = ref('')
 const senha = ref ('')
@@ -16,24 +15,38 @@ const router = useRouter()
 
 
 const handleCadastro = async () => {
-    if (senha.value !== confirmarSenha.value) {
-        alert("As senhas não coincidem.")
-        return 
-    }
+  if (
+    !email.value.trim() ||
+    !senha.value.trim() ||
+    !confirmarSenha.value.trim() ||
+    !nome.value.trim()
+  ) {
+    alert("Preencha todos os campos corretamente.");
+    return;
+  }
 
 
-    try {
-        await authService.signUp({
-            email: email.value,
-            senha: senha.value,
-            nome: nome.value
-        })
-        router.push('/calculator')
-    } catch (err) {
-        erro.value = err.message
+  if (senha.value !== confirmarSenha.value) {
+    alert("As senhas não coincidem.");
+    return;
+  }
+
+  try {
+    await authService.signUp({
+      email: email.value.trim(),
+      senha: senha.value,
+      nome: nome.value.trim()
+    });
+
+    router.push('/calculator');
+  } catch (err) {
+    if (err.message?.toLowerCase().includes('Email já cadastrado')) {
+    alert('Este email já está em uso. Por favor, use outro.');
+    } else {
+      alert('Erro ao cadastrar. Tente novamente.');
     }
+  }
 }
-
 
 
 

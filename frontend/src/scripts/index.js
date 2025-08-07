@@ -10,18 +10,33 @@ const routes = [{
     path: '/',
     redirect: 'home',
     children: [
-        { path: 'home', name: 'home', component: HomePage},
-        { path: 'login', name: 'login', component: LoginPage},
-        { path: 'signup', name: 'signup', component: SignupPage},
-        { path: 'profile', name: 'profile', component: ProfilePage},
-        { path: 'calculator', name: 'calculator', component: CalculatorPage},
-        { path: 'history', name: 'history', component: HistoryPage},
+        { path: 'home', name: 'home', component: HomePage, meta: { title: 'Caliming' } },
+        { path: 'login', name: 'login', component: LoginPage, meta: { title: 'Login' } },
+        { path: 'signup', name: 'signup', component: SignupPage, meta: { title: 'Cadastro' } },
+        { path: 'profile', name: 'profile', component: ProfilePage, meta: { title: 'Perfil', requiresAuth: true } },
+        { path: 'calculator', name: 'calculator', component: CalculatorPage, meta: { title: 'Calculadora', requiresAuth: true } },
+        { path: 'history', name: 'history', component: HistoryPage, meta: { title: 'Histórico', requiresAuth: true } },
     ]
 }]
 
 const router = createRouter({
     history:createWebHistory(),
     routes
+})
+
+router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('token')
+    if (to.meta.requiresAuth && !token) {
+        return next({ name: 'login' })
+    }
+
+    next();
+})
+
+router.afterEach((to) => {
+    if (to.meta.title) {
+        document.title = to.meta.title;
+    }
 })
 
 export { router }

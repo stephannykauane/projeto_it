@@ -40,9 +40,8 @@ export default {
       localStorage.setItem('token', data.token);
       return true;
     } else {
-      console.error("Erro ao cadastrar:", await resp.text());
-      console.error("url: ", calimingAPI.baseUrl)
-      throw new Error("Erro ao cadastrar");
+      const message = await resp.text()
+      throw new Error(message);
     }
   },
 };

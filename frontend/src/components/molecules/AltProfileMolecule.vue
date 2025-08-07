@@ -88,10 +88,8 @@ onMounted (() => {
       <div class="container-alt-senha">
         <TextAtom class="primeiro" text="SUA SENHA"/>
         <template v-if="!editandoSenha">
-          <TextAtom class="segundo" text="*********"/>
         </template>
         <template v-else>
-          <TextAtom class="segundo" text="*********"/>
           <div class="input">
             <input type="password" class="input-alterar" placeholder="Digite sua nova senha" v-model="novaSenha">
           </div>
