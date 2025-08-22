@@ -40,11 +40,8 @@ const handleCadastro = async () => {
 
         router.push('/calculator');
     } catch (err) {
-        if (err.message?.toLowerCase().includes('Email já cadastrado')) {
-            alert('Este email já está em uso. Por favor, use outro.');
-        } else {
+        if (err.status === 500)
             alert('Erro ao cadastrar. Tente novamente.');
-        }
     }
 }
 
@@ -161,6 +158,7 @@ hr {
 
 .router:focus {
     outline: none;
+
 }
 
 .inputs-login div {
