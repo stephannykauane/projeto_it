@@ -14,6 +14,15 @@ export default {
       localStorage.setItem('token', data.token);
       return true;
     } else {
+
+      if (resp.status === 401) {
+        alert("Email ou senha inválidos. Faça login novamente.");
+      }
+
+      if (resp.status === 400) {
+        alert("Credenciais faltando. Tente novamente.")
+      }
+
       console.error("Erro ao logar:", await resp.text());
       return false;
     }
@@ -40,6 +49,9 @@ export default {
       localStorage.setItem('token', data.token);
       return true;
     } else {
+      if (resp.status === 400) {
+        alert("Esse email já está cadastrado. Tente outro.")
+      }
       const message = await resp.text()
       throw new Error(message);
     }

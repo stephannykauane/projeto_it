@@ -51,11 +51,11 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 	case 1:
 		templateFile = filepath.Join(basePath, "RecomendaçãoSaturacaoBases.xlsx")
 	case 2:
-		templateFile = filepath.Join(basePath, "RecomendaçãoAluminio.xlsx")
+		templateFile = filepath.Join(basePath, "RecomendaçãoSaturacaoMagnesio.xlsx") 
 	case 3:
 		templateFile = filepath.Join(basePath, "RecomendaçãoSaturacaoCalcio.xlsx")
 	case 4:
-		templateFile = filepath.Join(basePath, "RecomendaçãoSaturacaoMagnesio.xlsx")
+		templateFile = filepath.Join(basePath, "RecomendaçãoAluminio.xlsx")
 	default:
 		http.Error(w, "MetodoID inválido", http.StatusBadRequest)
 		return

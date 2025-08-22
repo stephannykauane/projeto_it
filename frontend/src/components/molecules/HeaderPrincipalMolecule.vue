@@ -19,7 +19,9 @@ const handleLogout = () => {
     <div class="container-header-molecule">
         <div class="header-molecule">
             <div class="text-caliming">
-             <HeaderTextAtom class="caliming" text="Caliming"/>
+              <router-link class="router" to="home">
+                <HeaderTextAtom class="caliming" text="Caliming"/>
+              </router-link>
             </div>    
             <div class="button-Sair">
               <ButtonSairAtom text="Sair" @click="handleLogout"/> 
@@ -52,6 +54,14 @@ const handleLogout = () => {
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
+}
+
+.router:focus{
+  outline: none;
+}
+
+.router {
+  color: #ffffff;
 }
 
 

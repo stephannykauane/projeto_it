@@ -13,7 +13,7 @@ class CalimingAPIClient {
             headers['Authorization'] = `Bearer ${token}`;
         }
 
-        try { 
+        try {
             const resp = await fetch(`${this.baseUrl}${path}`, {
                 method,
                 headers,
@@ -21,7 +21,7 @@ class CalimingAPIClient {
                 credentials: 'include',
             });
 
-            if (resp.status === 401) {
+            if (resp.status === 417) {
                 alert("Sessão expirada. Redirecionando para login.");
                 localStorage.removeItem('token');
                 window.location.href = '/login';

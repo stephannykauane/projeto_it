@@ -45,7 +45,7 @@
                         <button type="button" class="info-button" @click.stop="toggleTooltip1">
                           <img src="../../../src/assets/info-icon.svg" alt="info" />
                         </button>
-                        <div class="tooltip-clicked-aluminio" v-if="showTooltip1">
+                        <div class="tooltip-clicked-aluminio"  v-if="showTooltip1">
                           Método sugerido exclusivamente para solos com menos de 15% de argila
                         </div>
                       </div>
@@ -90,7 +90,7 @@
                   </div>
 
                   <div class="button-info-wrapper">
-                    <button type="button" class="info-button" @click.stop="toggleTooltip1">
+                    <button type="button" tabindex="-100"  class="info-button" @click.stop="toggleTooltip1">
                       <img src="../../../src/assets/info-icon.svg" alt="info" />
                     </button>
                     <div class="tooltip-clicked" v-if="showTooltip1">
@@ -549,6 +549,10 @@ const hasAdicionais = computed(() => {
   align-items: center;
 }
 
+
+.info-button:focus, .info-button-method:focus{
+  outline: none;
+}
 .info-button-method {
   background: transparent;
   border: none;
@@ -746,6 +750,7 @@ const hasAdicionais = computed(() => {
   transition: .3s;
   border: 2px solid;
   border-color: #94af8b;
+  color: #ffffff;
 }
 
 .register-stepper {

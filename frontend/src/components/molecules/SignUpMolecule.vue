@@ -55,7 +55,7 @@ const handleCadastro = async () => {
 <template>
     <div class="login-molecule">
         <div class="caliming-text">
-            <router-link to="home">
+            <router-link class="router" to="home">
                 <TextAtom class="caliming" text="CALIMING" />
             </router-link>
         </div>
@@ -84,7 +84,7 @@ const handleCadastro = async () => {
         </div>
         <div class="possui-conta-text">
             <TextAtom text="Já possui conta?"></TextAtom>
-            <router-link to="login">
+            <router-link class="router" to="login">
                 <TextAtom class="entrar" text="Entrar." />
             </router-link>
         </div>
@@ -157,6 +157,10 @@ hr {
 .experiencia-text {
     color: #CAFE9D;
     margin-top: 1em;
+}
+
+.router:focus {
+    outline: none;
 }
 
 .inputs-login div {

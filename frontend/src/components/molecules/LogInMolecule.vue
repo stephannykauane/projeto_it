@@ -20,9 +20,7 @@ const handleLogin = async () => {
         })
         if (success) {
             router.push('/calculator')
-        } else {
-            alert("Email ou senha inválidos")
-        }
+        } 
     } catch (err) {
         erro.value = 'Erro inesperado: ' + (err instanceof Error ? err.message : String(err))
     }
@@ -33,7 +31,7 @@ const handleLogin = async () => {
 <template>
     <div class="login-molecule">
         <div class="caliming-text">
-            <router-link to="home">
+            <router-link class="router" to="home">
                 <TextAtom class="caliming" text="CALIMING" />
             </router-link>
         </div>
@@ -54,7 +52,7 @@ const handleLogin = async () => {
         </div>
         <div class="conta-text">
             <TextAtom text="Não possui conta?"></TextAtom>
-            <router-link to="signup">
+            <router-link class="router" to="signup">
                 <TextAtom class="cadastrar" text="Cadastrar." />
             </router-link>
 
@@ -119,6 +117,11 @@ const handleLogin = async () => {
 
 .caliming {
     color: #ffffff;
+}
+
+
+.router:focus{
+    outline: none;
 }
 
 .bemvindo-text {

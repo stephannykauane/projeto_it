@@ -2,17 +2,17 @@
     <nav class="container-menu">
         <ul class="menu">
             <li>
-                <router-link to="/profile" :class="{ active: route.path === '/profile' }">
+                <router-link class="router" to="/profile" :class="{ active: route.path === '/profile' }">
                     Sua conta
                 </router-link>
             </li>
             <li>
-                <router-link to="/calculator" :class="{ active: route.path === '/calculator' }">
+                <router-link class="router" to="/calculator" :class="{ active: route.path === '/calculator' }">
                     Calculadora
                 </router-link>
             </li>
             <li>
-                <router-link to="/history" :class="{ active: route.path === '/history' }">
+                <router-link class="router" to="/history" :class="{ active: route.path === '/history' }">
                     Histórico
                 </router-link>
             </li>
@@ -37,6 +37,10 @@ const route = useRoute();
     transition: .3s;
 }
 
+.router:focus {
+    outline: none;
+}
+
 .menu {
     list-style: none;
     display: flex;
@@ -53,6 +57,7 @@ const route = useRoute();
     margin: 0 10px;
     transition: .3s;
 }
+
 
 .menu a {
     display: flex;

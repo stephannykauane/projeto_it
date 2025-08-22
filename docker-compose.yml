@@ -11,29 +11,6 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
-
-  backend:
-    image: backend_it:1.0
-    ports:
-      - "8080:8080"
-    environment:
-      DB_HOST: postgres
-      DB_USER: calagem
-      DB_PASSWORD: admin
-      DB_NAME: calagem
-      DB_PORT: 5432
-      GO_ENV: production
-    depends_on:
-      - postgres
-
-  frontend:
-    image: frontend_it:1.0
-    ports:
-      - "5173:5173"
-    environment:
-      VITE_API_BASE_URL: http://localhost:8080
-    depends_on:
-      - backend
-
+      
 volumes:
   db_data:

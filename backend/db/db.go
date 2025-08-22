@@ -87,7 +87,7 @@ func RunMigrations() {
 		escapedUser, escapePassword, escapedHost, port, escapedDBname)
 
 	m, err := migrate.New(
-		"file://internal/database/migrations", 
+		"file:internal/database/migrations", 
 		dsn,
 	)
 	if err != nil {
@@ -98,5 +98,5 @@ func RunMigrations() {
 		log.Fatalf("Erro ao aplicar migrations: %v", err)
 	}
 
-	log.Println("✅ Migrations aplicadas com sucesso.")
+	log.Println("Migrations aplicadas com sucesso.")
 }
