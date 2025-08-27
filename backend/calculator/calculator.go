@@ -219,7 +219,7 @@ func Calculando(jsonData []byte, MetodoID int) (ResultadoCalculo, error) {
 		}
 
 		if Magnesio.TeorCa > 0 {
-			relacaoCaMg := (resultado.SatExtra.Float64/10) / ((Magnesio.MgDesejada/100) * Magnesio.Ctc)
+			relacaoCaMg := resultado.SatExtra.Float64 / Magnesio.MgDesejada
 			relacaoCaMg = math.Round(relacaoCaMg * 100) / 100
 			resultado.RelacaoCaMg = sql.NullFloat64{
 				Float64: relacaoCaMg,
@@ -257,8 +257,8 @@ func Calculando(jsonData []byte, MetodoID int) (ResultadoCalculo, error) {
 		}
 
 		if Calcio.TeorMg > 0 {
-			fmt.Println("teor ca", Calcio.CaO)
-			relacaoCaMg := ((Calcio.CaDesejada / 100) * Calcio.Ctc) / (resultado.SatExtra.Float64/10)
+
+			relacaoCaMg := (Calcio.CaDesejada / resultado.SatExtra.Float64)
 			relacaoCaMg = math.Round(relacaoCaMg * 100)/100
 			resultado.RelacaoCaMg = sql.NullFloat64{
 				Float64: relacaoCaMg,
