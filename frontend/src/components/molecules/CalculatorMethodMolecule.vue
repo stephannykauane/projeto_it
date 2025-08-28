@@ -213,8 +213,8 @@
                 <div class="resultados-adicionais">
                   <h2>Informações adicionais</h2>
                   <div class="analiseData">
-                    <TextDisplayMolecule label="Saturação de Calcio na CTC (%):" :value="formatarDecimalBR(calculo?.SatExtra)" />
-                    <TextDisplayMolecule label="Relação Ca/Mg esperada:" :value="formatarDecimalBR(calculo?.RelacaoCaMg)"/>
+                    <TextDisplayMolecule label="Saturação de Calcio na CTC (%):" :value="formatarDecimalBR(calculo?.sat_extra )" />
+                    <TextDisplayMolecule label="Relação Ca/Mg esperada:" :value="formatarDecimalBR(calculo?.relacao_ca_mg)"/>
                   </div>
                 </div>
               </div>

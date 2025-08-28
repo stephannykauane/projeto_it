@@ -219,12 +219,14 @@ func Calculando(jsonData []byte, MetodoID int) (ResultadoCalculo, error) {
 		}
 
 		if Magnesio.TeorCa > 0 {
-			relacaoCaMg := resultado.SatExtra.Float64 / Magnesio.MgDesejada
+			relacaoCaMg := (resultado.SatExtra.Float64 / Magnesio.MgDesejada)
 			relacaoCaMg = math.Round(relacaoCaMg * 100) / 100
 			resultado.RelacaoCaMg = sql.NullFloat64{
 				Float64: relacaoCaMg,
 				Valid: true,
 			}
+
+			fmt.Println(relacaoCaMg)
 	
 		}
 	case 3:
