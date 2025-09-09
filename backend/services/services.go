@@ -95,17 +95,16 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 			"E11": values.Resultado,
 		}
 	case 2:
-		data = map[string]interface{}{
+	    data = map[string]interface{}{
 			"B3":  values.Propriedade,
 			"B4":  values.Area,
 			"B5":  values.Consultor,
-			"A10": values.Argila,
-			"B10": values.Magnesio,
-			"C10": values.Calcio,
-			"D10": values.Aluminio,
-			"E10": values.Prnt,
-			"F10": values.Ctc,
-			"G10": values.Resultado,
+			"A11": values.Ctc,
+			"B11": values.TeorMg,
+			"C11": values.Prnt,
+			"D11": values.MgO,
+			"E11": values.MgDesejada,
+			"F11": values.Resultado,
 		}
 	case 3:
 		data = map[string]interface{}{
@@ -120,17 +119,19 @@ func SaveExcel(w http.ResponseWriter, r *http.Request) {
 			"F11": values.Resultado,
 		}
 	case 4:
-		data = map[string]interface{}{
+		data = map[string]interface{}{   
 			"B3":  values.Propriedade,
 			"B4":  values.Area,
 			"B5":  values.Consultor,
-			"A11": values.Ctc,
-			"B11": values.TeorMg,
-			"C11": values.Prnt,
-			"D11": values.MgO,
-			"E11": values.MgDesejada,
-			"F11": values.Resultado,
+			"A10": values.Argila,
+			"B10": values.Magnesio,
+			"C10": values.Calcio,
+			"D10": values.Aluminio,
+			"E10": values.Prnt,
+			"F10": values.Ctc,
+			"G10": values.Resultado,
 		}
+
 	}
 
 	for cell, value := range data {
