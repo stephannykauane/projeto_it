@@ -334,7 +334,7 @@ func EfetuarLogin(w http.ResponseWriter, r *http.Request) {
 		Expires:  expirationTime,
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteStrictMode,
+		SameSite: http.SameSiteNoneMode,
 	})
 
 	json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
@@ -454,7 +454,7 @@ func EfetuarSignUp(w http.ResponseWriter, r *http.Request) {
 		Expires:  expirationTime,
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteStrictMode,
+		SameSite: http.SameSiteNoneMode,
 	})
 
 	json.NewEncoder(w).Encode(map[string]string{"token": tokenString})
