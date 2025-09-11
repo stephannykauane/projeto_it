@@ -107,7 +107,7 @@ const route = useRoute();
 
 @media screen and (max-width: 769px) {
     .menu a {
-        font-size: 0.7em;
+        font-size: 0.6em;
     }
 }
 

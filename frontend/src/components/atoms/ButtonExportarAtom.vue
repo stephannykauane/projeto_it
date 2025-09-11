@@ -90,6 +90,23 @@
       }
       
   }
+
+
+    @media screen and (max-width: 500px) {
+      .exportar-excel{
+          font-size: 0.7em;
+          min-width: 90px;
+      }
+
+      .excel-icon {
+        width: 20px;
+      }
+
+      .button-exportar-excel {
+        padding: 0.6em;
+      }
+      
+  }
   
   
   </style>

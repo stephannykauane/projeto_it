@@ -62,7 +62,8 @@ onMounted (() => {
     <div class="alt">
       <div class="container-alt-email">
         <TextAtom class="primeiro" text="SEU EMAIL"/>
-        <TextAtom v-model="emailEmail" class="segundo" :text="emailEmail"/>
+        <!-- <TextAtom v-model="emailEmail" class="segundo" :text="emailEmail"/> -->
+        <TextAtom  class="segundo" text="kauanestephannny@gmail.com"/>
       </div>
     </div>
 
@@ -129,7 +130,7 @@ onMounted (() => {
   font-size: 0.9em;
   color: rgb(240, 248, 255);
   font-family:'Konkhmer Sleokchher' ;
-  border-radius: 5em;
+  border-radius: 1em;
   border: 1px solid #ccc;
   width: 100%;
   background-color: rgba(112, 136, 90, 0.7);
@@ -161,7 +162,7 @@ onMounted (() => {
   border-radius: 1.3em;
   margin: 1em;
   transition: 0.5s;
-
+  min-width: 200px;
 
 }
 
@@ -171,6 +172,7 @@ onMounted (() => {
 }
 
 .segundo {
+  word-break: break-all;
   color: #ffffff;
   text-align: start;
   margin-top:0.5em;
@@ -231,9 +233,16 @@ onMounted (() => {
 
 }
 
-@media screen and (max-width: 480px){
+@media screen and (max-width: 500px){
   .input-alterar {
     margin: 0;
+    font-size: 0.6em;
+    padding: 0.4em;
+
+  }
+
+  .segundo {
+    font-size: 0.8em;
   }
   
 }

@@ -50,6 +50,7 @@
                         </div>
                       </div>
                     </template>
+
                   </button>
                 </div>
               </div>
@@ -233,7 +234,7 @@
         <div class="next-and-back">
           <div class="cta"></div>
           <div class="cta">
-            <ButtonAlterarAtom text="Avançar >" @click="next" />
+            <ButtonAlterarAtom class="ctaa" text="Avançar >" @click="next" />
           </div>
         </div>
       </div>
@@ -242,8 +243,9 @@
         <div class="next-and-back">
           <div class="cta-step2">
             <div>
-              <ButtonAlterarAtom text="< Voltar" @click="back" />
+              <ButtonAlterarAtom class="ctaa" text="< Voltar" @click="back" />
             </div>
+
             <div class="button-info-wrapper">
               <button type="button" class="info-button-method" @click.stop="toggleTooltip2">
                 <img src="../../../src/assets/info-icon.svg" alt="info" />
@@ -252,6 +254,7 @@
                 Os cálculos sugeridos têm por base informações publicadas por Sousa e Lobato(2004), no livro "Cerrado: Correção do Solo e Adubação"
               </div>
             </div>
+            
           </div>
         </div>
       </div>
@@ -260,26 +263,29 @@
         <div class="next-and-back">
           <div class="cta-step2">
             <div>
-              <ButtonAlterarAtom text="< Voltar" @click="back" />
+              <ButtonAlterarAtom class="ctaa" text="< Voltar" @click="back" />
             </div>
           </div>
           <div class="cta">
-            <ButtonAlterarAtom text="Avançar >" @click="sendAnaliseAndNext" />
+            <ButtonAlterarAtom class="ctaa" text="Avançar >" @click="sendAnaliseAndNext" />
           </div>
         </div>
       </div>
 
       <div v-else-if="step === 4">
-        <div class="next-and-back">
+        <div class="next-and-back-especial">
           <div class="cta">
-            <ButtonAlterarAtom class="back" text="< Voltar" @click="back" />
+            <ButtonAlterarAtom class="ctaa" text="< Voltar" @click="back" />
           </div>
           <div class="cta">
-            <ButtonAlterarAtom text="Reiniciar" @click="reiniciar" />
+            <ButtonAlterarAtom class="ctaa" text="Reiniciar" @click="reiniciar" />
           </div>
-          <div class="cta-especial">
-            <ButtonExportarAtom text="Exportar para Excel" @click="exportarParaExcel()" />
+          <div>
+              <div class="cta-especial">
+                <ButtonExportarAtom text="Exportar para Excel" @click="exportarParaExcel()" />
+              </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -520,6 +526,8 @@ const hasAdicionais = computed(() => {
   color: #ffffff;
 }
 
+
+
 .especial-aluminio {
   display: flex;
   justify-content: center;
@@ -553,6 +561,7 @@ const hasAdicionais = computed(() => {
 .info-button:focus, .info-button-method:focus{
   outline: none;
 }
+
 .info-button-method {
   background: transparent;
   border: none;
@@ -619,6 +628,8 @@ const hasAdicionais = computed(() => {
   width: 220px;
   z-index: 10;
   text-align: center;
+
+
 
 }
 
@@ -716,7 +727,8 @@ const hasAdicionais = computed(() => {
   margin-top: auto;
 }
 
-.next-and-back {
+.next-and-back, .next-and-back-especial {
+
   display: flex;
   margin-top: auto;
   justify-content: space-between;
@@ -937,32 +949,15 @@ const hasAdicionais = computed(() => {
     font-size: 0.8em;
   }
 
-  .tooltip-icon .tooltiptext {
-    margin-left: -8.7em;
-  }
-
-  .tooltip-aluminio .tooltiptext {
-    margin-left: -7em;
-
-  }
-
-  .tooltip-icon {
-    width: 0;
-  }
-
-  .tooltip-aluminio .tooltip-icon img {
-    width: 1.7em;
-
-  }
-
-
-
-
 
 }
 
 
 @media screen and (max-width:769px) {
+
+  .metodo {
+    font-size: 0.9em;
+  }
 
   .form-transitions-container {
     min-height: 15em;
@@ -1009,23 +1004,16 @@ const hasAdicionais = computed(() => {
 }
 
 @media screen and (max-width:580px) {
-
   .next-and-back {
-    flex-wrap: wrap;
-    gap: 1em;
+   
+    gap: 0.5em;
 
   }
-
-  .cta-especial {
-    margin-top: 1em;
-  }
-
 
 }
 
 
 @media screen and (max-width:550px) {
-
 
   .register-stepper .step {
     font-size: 0.7em;
@@ -1054,13 +1042,20 @@ const hasAdicionais = computed(() => {
   .container-form-calculator {
     padding: 5em 3em;
   }
+  
 
+  .next-and-back-especial {
+    flex-wrap: wrap;
+    gap: 0.5em;
+    
+  }
+
+  
 }
 
 
 
-@media screen and (max-width:480px) {
-
+@media screen and (max-width:500px) {
   .container-method-calculator {
     padding: 5em 4em;
   }
@@ -1069,8 +1064,6 @@ const hasAdicionais = computed(() => {
     width: 150px;
     margin-left: -6.2em;
   }
-
-  @media screen and (max-width:769px) {
 
     .register-stepper .step {
       font-size: 0.8em;
@@ -1084,18 +1077,21 @@ const hasAdicionais = computed(() => {
       padding: 5em 3em;
     }
 
-  }
+    .ctaa {
+      font-size: 1.1em;
+    }
+
+
 
 
 }
 
-@media screen and (max-width:375px) {
+@media screen and (max-width:390px) {
 
   .container-method-calculator {
     padding: 5em 2em;
   }
 
-  @media screen and (max-width:769px) {
 
     .register-stepper .step {
       font-size: 0.7em;
@@ -1109,7 +1105,7 @@ const hasAdicionais = computed(() => {
       padding: 5em 2em;
     }
 
-  }
+
 
 
 }
