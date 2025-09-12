@@ -615,7 +615,7 @@ const hasAdicionais = computed(() => {
 
 .tooltip-clicked-method {
   position: absolute;
-  top: -180%;
+  top: -150%;
   left: 50%;
   transform: translateX(-50%);
   right: 0;
@@ -625,12 +625,12 @@ const hasAdicionais = computed(() => {
   font-size: 0.75em;
   padding: 0.7em;
   border-radius: 6px;
-  width: 220px;
+  width: auto;
+  min-width: 20em;
   z-index: 10;
   text-align: center;
-
-
-
+  transition: 0.5s;
+  word-wrap: break-word;
 }
 
 
@@ -684,6 +684,7 @@ const hasAdicionais = computed(() => {
   top: -10px;
   left: 50%;
   margin-left: -5px;
+  transition: 0.5s;
   border-width: 5px;
   border-style: solid;
   border-color: transparent transparent rgba(133, 175, 123, 0.699) transparent;
@@ -692,7 +693,8 @@ const hasAdicionais = computed(() => {
 .tooltip-clicked-method::after {
   content: "";
   position: absolute;
-  top: 107px;
+  transition: 0.5s;
+  top: 89px;
   left: 50%;
   margin-left: -5px;
   border-width: 5px;
@@ -706,6 +708,7 @@ const hasAdicionais = computed(() => {
   position: absolute;
   top: 100%;
   left: 50%;
+  transition: 0.5s;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
@@ -741,13 +744,16 @@ const hasAdicionais = computed(() => {
   margin-top: 3em;
   justify-content: center;
   flex-direction: column;
+  transition: .5s;
 }
+
 
 .children {
   display: flex;
   justify-content: space-around;
   flex-direction: row;
   gap: 0.5em;
+  transition: .5s;
 }
 
 .buttonChange {
@@ -950,6 +956,22 @@ const hasAdicionais = computed(() => {
   }
 
 
+  .tooltip-clicked-method {
+    top: -180%;
+    left: 50%;
+    font-size: 0.8em;
+    width: auto;
+    min-width: 20em;
+    transition: 0.5s
+  }
+
+
+
+  .tooltip-clicked-method::after {
+     top: 76px;
+  }
+
+
 }
 
 
@@ -994,11 +1016,14 @@ const hasAdicionais = computed(() => {
 
   }
 
-
   .tooltip-aluminio .tooltiptext {
     margin-left: -6.5em;
     width: 150px;
 
+  }
+
+  .tooltip-clicked {
+    font-size: 0.7em;
   }
 
 }
@@ -1008,6 +1033,22 @@ const hasAdicionais = computed(() => {
    
     gap: 0.5em;
 
+  }
+
+  .children {
+    flex-wrap: wrap;
+    transition: .5s;
+ 
+  }
+
+  .opcional-date {
+    align-self: flex-start;
+  }
+
+  .child {
+    justify-content: center;
+    align-items: center;
+    transition: .5s;
   }
 
 }
@@ -1027,9 +1068,27 @@ const hasAdicionais = computed(() => {
     padding: 5em 2em;
   }
 
+  .tooltip-clicked {
+    font-size: 0.6em;
+    width: 20em;
+  }
+
+
+  .info-button img {
+    width: 1.2em;
+  }
+  :deep(.tooltip-clicked-method) {
+    top: -200% !important;
+    left: 0%;
+    transform: translateX(-50%);
+    font-size: 0.67em !important; 
+    padding: 0.7em 2em;
+    z-index: 10;
+  }
+
 }
 
-@media screen and (max-width:769px) {
+@media screen and (max-width:800px) {
 
   .register-stepper .step {
     font-size: 0.8em;
@@ -1050,6 +1109,17 @@ const hasAdicionais = computed(() => {
     
   }
 
+
+  .tooltip-clicked-method {
+    top: -195%;
+    left: 50%;
+    font-size: 0.8em;
+    transition: 0.5s
+  }
+
+  .tooltip-clicked-method::after {
+     top: 76px;
+  }
   
 }
 
@@ -1086,12 +1156,11 @@ const hasAdicionais = computed(() => {
 
 }
 
-@media screen and (max-width:390px) {
+@media screen and (max-width:490px) {
 
   .container-method-calculator {
     padding: 5em 2em;
   }
-
 
     .register-stepper .step {
       font-size: 0.7em;
@@ -1105,8 +1174,29 @@ const hasAdicionais = computed(() => {
       padding: 5em 2em;
     }
 
+    :deep(.tooltip-clicked-method) {
+    top: -220% !important;
+    left: 20%;
+    transform: translateX(-50%);
+    font-size: 0.67em !important; 
+    padding: 1em;
+    z-index: 10;
+  }
 
+  :deep(.info-button-method img) {
+    width: 1.5em;
+    margin-right: 2.5em;
+  }
 
+  .tooltip-clicked-method::after {
+     top: 69px;
+  }
 
 }
+
+
+
+
+  
+
 </style>

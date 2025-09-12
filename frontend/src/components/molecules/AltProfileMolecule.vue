@@ -62,8 +62,8 @@ onMounted (() => {
     <div class="alt">
       <div class="container-alt-email">
         <TextAtom class="primeiro" text="SEU EMAIL"/>
-        <!-- <TextAtom v-model="emailEmail" class="segundo" :text="emailEmail"/> -->
-        <TextAtom  class="segundo" text="kauanestephannny@gmail.com"/>
+        <TextAtom v-model="emailEmail" class="segundo" :text="emailEmail"/>
+
       </div>
     </div>
 
@@ -236,8 +236,8 @@ onMounted (() => {
 @media screen and (max-width: 500px){
   .input-alterar {
     margin: 0;
-    font-size: 0.6em;
-    padding: 0.4em;
+    font-size: 0.5em;
+    padding: 0.2em;
 
   }
 
