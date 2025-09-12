@@ -81,7 +81,6 @@ export default {
 
 @media screen and (max-width: 580px) {
     .profile-alterar{
-    
         min-width: 60px;
         padding: 0;
     }
@@ -90,13 +89,13 @@ export default {
 
 
 
-@media screen and (max-width: 500px) {
-    
+@media screen and (max-width: 580px) {
     .profile-alterar{
-    
         min-width: 100px;
         padding: 0;
         font-size: 0.6em;
+        text-align: center;
+        align-items: center;
     }
     
 }

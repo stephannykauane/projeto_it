@@ -69,13 +69,13 @@ onUnmounted(() => {
 }
 
 
-@media screen and (max-width: 500px){
+@media screen and (max-width: 580px){
     .nav{
       padding: 0 2vw;
     }
 
-    .alt {
-      padding: 0 10vw;
+    :deep(.alt) {
+      padding: 0 10vw !important; 
     }
 }
 

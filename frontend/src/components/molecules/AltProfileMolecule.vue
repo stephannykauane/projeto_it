@@ -59,7 +59,7 @@ onMounted (() => {
 <template>
   <div class="container-molecule-alt">
 
-    <div class="alt">
+    <div class="alt-molecule">
       <div class="container-alt-email">
         <TextAtom class="primeiro" text="SEU EMAIL"/>
         <TextAtom v-model="emailEmail" class="segundo" :text="emailEmail"/>
@@ -67,7 +67,7 @@ onMounted (() => {
       </div>
     </div>
 
-    <div class="alt" :class="{ 'expandido': editandoNome }">
+    <div class="alt-molecule" :class="{ 'expandido': editandoNome }">
       <div class="container-alt-nome">
         <TextAtom class="primeiro" text="SEU NOME"/>
         <template v-if="!editandoNome">
@@ -85,7 +85,7 @@ onMounted (() => {
       </div>
     </div>
 
-    <div class="alt" :class="{ 'expandido': editandoSenha }">
+    <div class="alt-molecule" :class="{ 'expandido': editandoSenha }">
       <div class="container-alt-senha">
         <TextAtom class="primeiro" text="SUA SENHA"/>
         <template v-if="!editandoSenha">
@@ -105,7 +105,7 @@ onMounted (() => {
 
 <style scoped>
 
-.alt.expandido {
+.alt-molecule.expandido {
   display: flex;
   transition: 0.5s;
   padding:  1em 0.5em;
@@ -153,7 +153,7 @@ onMounted (() => {
   flex-direction: column;
 }
 
-.alt {
+.alt-molecule {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -204,7 +204,7 @@ onMounted (() => {
 }
 
 @media screen and (max-width: 769px) {
-  .alt{
+  .alt-molecule{
     flex-direction: column;
   }
   .container-alt-nome,
@@ -233,16 +233,25 @@ onMounted (() => {
 
 }
 
-@media screen and (max-width: 500px){
+@media screen and (max-width: 580px){
   .input-alterar {
     margin: 0;
     font-size: 0.5em;
-    padding: 0.2em;
+    padding: 0.5em;
 
+  }
+
+  :deep(.alt) {
+    padding: 0 !important;
   }
 
   .segundo {
     font-size: 0.8em;
+  }
+   
+
+  .button-alterar {
+    margin-bottom: 0.5em;
   }
   
 }
