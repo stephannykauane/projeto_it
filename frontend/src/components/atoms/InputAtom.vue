@@ -36,6 +36,7 @@ defineProps({
 
 input {
   text-align: left;
+  color: #ffffff !important;
 }
 
 

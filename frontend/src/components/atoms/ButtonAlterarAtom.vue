@@ -91,8 +91,7 @@ export default {
 
 @media screen and (max-width: 580px) {
     .profile-alterar{
-        min-width: 100px;
-        padding: 0;
+        padding: 0.1em 0.5em;
         font-size: 0.6em;
         text-align: center;
         align-items: center;
