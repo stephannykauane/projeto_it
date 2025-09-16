@@ -39,6 +39,7 @@ h1 {
 
 input {
   color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 button {
