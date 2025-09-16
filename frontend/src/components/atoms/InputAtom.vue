@@ -37,9 +37,18 @@ defineProps({
 input {
   text-align: left;
   color: #ffffff !important;
-  -webkit-text-fill-color: #ffffffb9;
 }
 
+
+.text-input::placeholder {
+  color: #ffffffc5;
+  opacity: 1; 
+}
+
+
+.text-input::-webkit-input-placeholder {
+  color: #ffffffc5;
+}
 
 .text-input:focus{
     border-color: rgba(255, 255, 255, 0.6);

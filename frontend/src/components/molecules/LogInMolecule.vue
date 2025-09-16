@@ -143,6 +143,7 @@ hr {
     margin: 5px 60px;
 }
 
+
 .cadastrar {
     color: #384031;
     cursor: pointer;

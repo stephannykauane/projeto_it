@@ -27,11 +27,12 @@ export default {
     display: inline-block;
     font-size: 0.95em; 
     font-family:'Konkhmer Sleokchher'; 
-    color: #ffffff !important;
+    color: #CAFE9D;
     background-color: #384031;   
     min-width: 150px;   
     text-align: center;   
 }
+
 
 
 .green-button{
