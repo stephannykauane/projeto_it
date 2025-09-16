@@ -94,7 +94,7 @@ onMounted(() => {
 
     <div
       class="info"
-      v-for="(info, index) in infosReversos.slice().reverse()"
+      v-for="(info, index) in infosReversos"
       :key="index"
     >
       <CheckBoxAtom class="check" @exportar="makeExcel(info)">

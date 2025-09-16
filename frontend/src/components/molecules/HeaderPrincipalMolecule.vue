@@ -39,7 +39,7 @@ const handleLogout = () => {
 .header-molecule {
     display: flex;
     align-items: center;
-    width: 100%;
+    width: 150%;
     padding: 1rem;
     margin: 0 14.2em;
     box-sizing: border-box;
