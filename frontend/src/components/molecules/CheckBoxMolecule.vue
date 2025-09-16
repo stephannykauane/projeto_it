@@ -126,6 +126,7 @@ onMounted(() => {
   justify-content: center;
   flex-direction: column;
   margin: 0 16.5em;
+  transition: .5s;
 }
 
 p {
@@ -163,6 +164,25 @@ p {
   color: #c5c2c2;
 }
 
+@media screen and (max-width: 1500px) {
+  .checkbox-molecule {
+    margin: 0 13em;
+  }
+}
+
+
+@media screen and (max-width: 1100px) {
+  .checkbox-molecule {
+    margin: 0 8em;
+  }
+}
+
+
+@media screen and (max-width: 800px) {
+  .checkbox-molecule {
+    margin: 0 5em;
+  }
+}
 @media screen and (max-width: 769px) {
   .checkbox-molecule {
     margin: 0 5em;
@@ -200,4 +220,5 @@ p {
 
   }
 }
+
 </style>

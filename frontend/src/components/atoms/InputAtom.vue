@@ -16,7 +16,7 @@ defineProps({
 </script>
 
 
-<style>
+<style scoped>
 .text-input{
   width: 100%;
   margin: 0.1em 0.1em;
@@ -37,6 +37,7 @@ defineProps({
 input {
   text-align: left;
   color: #ffffff !important;
+  -webkit-text-fill-color: #ffffffb9;
 }
 
 

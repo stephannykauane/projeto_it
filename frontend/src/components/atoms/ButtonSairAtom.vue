@@ -25,7 +25,7 @@
 
 .sair-button {
     display: inline-block;
-    color: aliceblue;
+    color: aliceblue !important;
     background-color: #384031;
     font-family:'Konkhmer Sleokchher';
     font-size: 0.90em;

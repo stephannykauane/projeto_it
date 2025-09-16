@@ -27,7 +27,7 @@ export default {
     display: inline-block;
     font-size: 0.95em; 
     font-family:'Konkhmer Sleokchher'; 
-    color: #CAFE9D;
+    color: #ffffff !important;
     background-color: #384031;   
     min-width: 150px;   
     text-align: center;   

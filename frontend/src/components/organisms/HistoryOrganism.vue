@@ -34,6 +34,7 @@ import CheckBoxMolecule from '../molecules/CheckBoxMolecule.vue';
     width: 100%;
     justify-content: center;
     flex-direction: column;
+    transition: .5s
 }
 
 .history-text {
@@ -43,20 +44,14 @@ import CheckBoxMolecule from '../molecules/CheckBoxMolecule.vue';
 .checkbox-size {
     display: flex;
     justify-content: center;
+    transition: .5s
 }
 
 .history-text h1 {
     margin-top: 0.1em;
     font-size: 1.8em;
+    transition: .5s
 
-}
-
-.filter {
-    display: flex;
-    justify-content: center;
-    margin: 1em 4em;
-    position: relative;
-    z-index: 5;
 }
 
 
@@ -66,6 +61,7 @@ import CheckBoxMolecule from '../molecules/CheckBoxMolecule.vue';
     justify-content: flex-start;
     flex-direction: row;
     align-items: center;
+    transition: .5s
 }
 
 .icon-history {
@@ -85,6 +81,7 @@ import CheckBoxMolecule from '../molecules/CheckBoxMolecule.vue';
     padding-left: 16.3em;
     margin-bottom: 1em;
     color: #ffffff;
+    transition: .5s
 }
 
 .history-icon {
@@ -92,24 +89,10 @@ import CheckBoxMolecule from '../molecules/CheckBoxMolecule.vue';
     justify-content: flex-start;
     margin-left: 0.5em;
     margin-bottom: 0.3em;
+    transition: .5s
 }
 
-.icon-2 {
-    display: flex;
-    justify-content: flex-start;
-    margin-left: 0.5em;
-}
 
-.filter-text-icon {
-    width: 100%;
-    text-align: left;
-    display: flex;
-    justify-content: flex-start;
-    flex-direction: row;
-    align-items: center;
-    font-size: 1.5em;
-    margin-top: 1em;
-}
 
 .select {
     width: 23.4%;
@@ -126,6 +109,31 @@ import CheckBoxMolecule from '../molecules/CheckBoxMolecule.vue';
 
 ::v-deep(.profile-alterar:hover) {
     background-color: #344129;
+
+}
+
+@media screen and (max-width: 1500px) {
+    .history-things {
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: column;
+        padding-left: 13em;
+        margin-bottom: 1em;
+        margin-top:2em;
+        color: #ffffff;
+        transition: .5s;
+    }
+
+    .history-text {
+        font-size: 0.9em;
+        transition: .5s
+    }
+
+    .icon-history {
+        width: 3%;
+        transition: .5s
+    }
+
 
 }
 
@@ -217,4 +225,5 @@ import CheckBoxMolecule from '../molecules/CheckBoxMolecule.vue';
 
 
 }
+
 </style>

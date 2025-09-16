@@ -24,7 +24,7 @@ a:hover {
 
 body {
   margin: 0;
-  color: #ffffff;
+  color: #ffffff !important;
   display: flex;
   place-items: center;
   min-width: 320px;
@@ -39,7 +39,6 @@ h1 {
 
 input {
   color: #ffffff !important;
-  -webkit-text-fill-color: #ffffffb9 !important;
 }
 
 button {

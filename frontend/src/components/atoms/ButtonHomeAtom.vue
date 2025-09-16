@@ -39,7 +39,7 @@ export default {
 .home-button{
   font-size: 1.2em; 
   font-family: 'Arya', serif;
-  color: white;
+  color: white !important;
   border: 2px solid #ffffffc7;
   border-radius: 0.5em;
   text-align: center;
